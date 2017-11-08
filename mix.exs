@@ -61,7 +61,7 @@ defmodule Instruments.Mixfile do
   defp package do
     [
       name: "instruments",
-      files: ["lib", "pages", "README*", "LICENSE"],
+      files: ["lib", "pages", "README*", "LICENSE", "mix.exs", "mix.lock"],
       maintainers: ["Steve Cohen", "Stanislav Vishnevskiy"],
       licenses: ["MIT"],
       source_url: @github_url,
