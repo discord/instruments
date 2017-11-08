@@ -1,16 +1,22 @@
 defmodule Instruments.Mixfile do
   use Mix.Project
 
+  @version "1.0.0"
+  @github_url "https://github.com/discordapp/instruments"
+
   def project do
     [
       app: :instruments,
-      version: "1.0.0",
-      elixir: "~> 1.2",
+      name: "Instruments",
+      version: @version,
+      elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       elixirc_paths: compile_paths(Mix.env),
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      package: package(),
+      description: description()
     ]
   end
 
@@ -28,10 +34,7 @@ defmodule Instruments.Mixfile do
 
   def application do
     [
-      extra_applications: [
-        :logger
-        # :os_mon,
-      ],
+      extra_applications: [:logger],
       mod: {Instruments.Application, []}
     ]
   end
@@ -48,6 +51,21 @@ defmodule Instruments.Mixfile do
       {:ex_doc, "~> 0.18.1", only: :dev, runtime: false},
       {:recon, "~> 2.3.1"},
       {:statix, "~> 1.0.1"},
+    ]
+  end
+
+  defp description do
+    "A small, fast, and unobtrusive metrics library"
+  end
+
+  defp package do
+    [
+      name: "instruments",
+      files: ["lib", "pages", "README*", "LICENSE"],
+      maintainers: ["Steve Cohen", "Stanislav Vishnevskiy"],
+      licenses: ["MIT"],
+      source_url: @github_url,
+      links: %{"GitHub" => @github_url}
     ]
   end
 end
