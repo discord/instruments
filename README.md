@@ -30,7 +30,7 @@ defmodule ModuleThatNeedsMetrics do
 
   def metrics_function() do
     Instruments.increment("my.counter", 3)
-	Instruments.measure("metrics_function.other_fn_call", &other_function/0)
+    Instruments.measure("metrics_function.other_fn_call", &other_function/0)
   end
 end
 ```
