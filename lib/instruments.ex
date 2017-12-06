@@ -158,7 +158,8 @@ defmodule Instruments do
 
     quote do
       title = unquote(title_iodata)
-      header = ["_e{", IO.iodata_length(title), ",", IO.iodata_length(unquote(text)), "}:", title, "|", unquote(text)]
+      header = ["_e{", Integer.to_charlist(IO.iodata_length(title)), ",",
+                Integer.to_charlist(IO.iodata_length(unquote(text))), "}:", title, "|", unquote(text)]
       message =
         case Keyword.get(unquote(opts), :tags) do
           nil ->
