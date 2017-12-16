@@ -6,7 +6,7 @@ After the underlying `Statix` library is configured, `Instruments` requires litt
 To configure `Statix`, include the following in your `config/config.exs` file:
 
 ```elixir 
-config: :statix, 
+config :statix, 
   prefix: "#{Mix.env}",
   host: "localhost",
   port: 15339 
