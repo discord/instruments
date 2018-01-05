@@ -61,7 +61,7 @@ The first, and easiest is to use the `:mfa` key, which takes a tuple of
 
 ```elixir
 Probe.define!("erlang.process_count", :gauge,
-  mfa: {:erlang, :system_info, [:process_count])
+  mfa: {:erlang, :system_info, [:process_count]})
 ```
 
 The above will report the process count every ten seconds.
