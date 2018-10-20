@@ -22,7 +22,7 @@ appropriate function:
 
 ```elixir
 defmodule ModuleThatNeedsMetrics do
-   use Instruments
+  use Instruments
 
   def other_function() do
     Process.sleep(150)
