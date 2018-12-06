@@ -32,7 +32,7 @@ There are a couple of `Instruments` specific application variables:
 For example:
 
      config :instruments, 
-       reporter_module: Instruments.Reporters.Logger,
+       reporter_module: Instruments.StatsReporter.Logger,
        fast_counter_report_interval: 30_000,
        probe_prefix: "probes",
        statsd_port: 15339
