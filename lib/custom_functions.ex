@@ -47,30 +47,37 @@ defmodule Instruments.CustomFunctions do
     quote do
       use Instruments
 
+      @doc false
       def increment(key, value \\ 1, options \\ []) do
         Instruments.increment([unquote(prefix_with_dot), key], value, options)
       end
 
+      @doc false
       def decrement(key, value \\ 1, options \\ []) do
         Instruments.decrement([unquote(prefix_with_dot), key], value, options)
       end
 
+      @doc false
       def gauge(key, value, options \\ []) do
         Instruments.gauge([unquote(prefix_with_dot), key], value, options)
       end
 
+      @doc false
       def histogram(key, value, options \\ []) do
         Instruments.histogram([unquote(prefix_with_dot), key], value, options)
       end
 
+      @doc false
       def timing(key, value, options \\ []) do
         Instruments.timing([unquote(prefix_with_dot), key], value, options)
       end
 
+      @doc false
       def set(key, value, options \\ []) do
         Instruments.set([unquote(prefix_with_dot), key], value, options)
       end
 
+      @doc false
       def measure(key, options \\ [], func) do
         Instruments.measure([unquote(prefix_with_dot), key], options, func)
       end
