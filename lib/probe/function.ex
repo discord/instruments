@@ -26,5 +26,5 @@ defmodule Instruments.Probe.Function do
     {:ok, {probe_fn, probe_value}}
   end
 
-  def probe_handle_msg(_, state), do: {:ok, state}
+  def probe_handle_message(_, state), do: {:ok, state}
 end

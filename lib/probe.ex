@@ -74,7 +74,7 @@ defmodule Instruments.Probe do
   You must return `{:ok, state}`. Any other return values will cancel further
   execution of the probe.
   """
-  @callback probe_handle_msg(any, state) :: {:ok, state}
+  @callback probe_handle_message(any, state) :: {:ok, state}
 
   alias Instruments.Probe.Definitions
 
