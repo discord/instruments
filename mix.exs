@@ -1,7 +1,7 @@
 defmodule Instruments.Mixfile do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.1.0"
   @github_url "https://github.com/discordapp/instruments"
 
   def project do
@@ -62,7 +62,7 @@ defmodule Instruments.Mixfile do
     [
       name: "instruments",
       files: ["lib", "pages", "README*", "LICENSE"],
-      maintainers: ["Steve Cohen", "Stanislav Vishnevskiy"],
+      maintainers: ["Discord Core Infrastructure"],
       licenses: ["MIT"],
       source_url: @github_url,
       links: %{"GitHub" => @github_url}
