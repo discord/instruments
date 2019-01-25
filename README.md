@@ -14,6 +14,10 @@ Instruments has the following types of metrics that closely mirror statsd.
   * **Sets**: Add a value to a statsd set
   * **Events**: Report an event like a deploy using arbitrary keys and values
 
+## Getting Started
+
+Head over to the [pages directory](https://github.com/discordapp/instruments/tree/master/pages) and take a look through
+the different guides to learn how to get started with Instruments
 
 ## Basic Usage
 
