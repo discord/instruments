@@ -13,7 +13,7 @@ Instruments has the following types of metrics that closely mirror statsd.
   * **Measurements**: Measure the execution time of a function
   * **Sets**: Add a value to a statsd set
   * **Events**: Report an event like a deploy using arbitrary keys and values
-
+  
 
 ## Basic Usage
 
@@ -30,7 +30,7 @@ defmodule ModuleThatNeedsMetrics do
 
   def metrics_function() do
     Instruments.increment("my.counter", 3)
-	Instruments.measure("metrics_function.other_fn_call", &other_function/0)
+	  Instruments.measure("metrics_function.other_fn_call", &other_function/0)
   end
 end
 ```
