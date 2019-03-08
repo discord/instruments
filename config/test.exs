@@ -4,8 +4,9 @@ use Mix.Config
 # in test so we don't conflict in the build env.
 config :instruments,
   statsd_port: 15310,
+  statsd_host: "localhost",
   fast_counter_report_interval: 10,
   reporter_module: Instruments.Statix
 
 config :logger, compile_time_purge_level: :error, level: :error#, backends: []
-config :statix, port: 15310
+config :statix, port: 15310, host: "localhost"

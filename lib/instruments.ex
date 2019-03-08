@@ -56,6 +56,7 @@ defmodule Instruments do
 
   @metrics_module Application.get_env(:instruments, :reporter_module, Instruments.Statix)
   @statsd_port Application.get_env(:instruments, :statsd_port, 8125)
+  @statsd_host to_charlist(Application.get_env(:instruments, :statsd_host, "localhost"))
 
   defmacro __using__(_opts) do
     quote do
@@ -65,6 +66,9 @@ defmodule Instruments do
 
   @doc false
   def statsd_port(), do: @statsd_port
+
+  @doc false
+  def statsd_host(), do: @statsd_host
 
   # metrics macros
   @doc false
@@ -176,7 +180,7 @@ defmodule Instruments do
       # this will have to be changed.
       unquote(@metrics_module)
       |> Process.whereis
-      |> :gen_udp.send('localhost', Instruments.statsd_port(), message)
+      |> :gen_udp.send(Instruments.statsd_host(), Instruments.statsd_port(), message)
     end
   end
 
