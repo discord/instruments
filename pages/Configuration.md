@@ -26,7 +26,9 @@ There are a couple of `Instruments` specific application variables:
 * `fast_counter_report_interval`: How often counters should send data to the `reporter_module`. Defaults
                                   to 10 seconds.
 * `probe_prefix`: A global prefix to apply to all probes.
-* `statsd_port`: The port that the statsd server listens on. Should be the same as the port in the statix 
+* `statsd_port`: The port that the statsd server listens on. Should be the same as the port in the statix
+                 configuration above.
+* `statsd_host`: The host that the statsd server listens on. Should be the same as the host in the statix
                  configuration above.
 
 For example:
@@ -35,4 +37,5 @@ For example:
        reporter_module: Instruments.StatsReporter.Logger,
        fast_counter_report_interval: 30_000,
        probe_prefix: "probes",
-       statsd_port: 15339
+       statsd_port: 15339,
+       statsd_host: "localhost"
