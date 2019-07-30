@@ -5,5 +5,5 @@
   "makeup_elixir": {:hex, :makeup_elixir, "0.13.0", "be7a477997dcac2e48a9d695ec730b2d22418292675c75aa2d34ba0909dcdeda", [:mix], [{:makeup, "~> 0.8", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.5.0", "90e2eca3d0266e5c53f8fbe0079694740b9c91b6747f2b7e3c5d21966bba8300", [:mix], [], "hexpm"},
   "recon": {:hex, :recon, "2.3.2", "4444c879be323b1b133eec5241cb84bd3821ea194c740d75617e106be4744318", [:rebar3], [], "hexpm"},
-  "statix": {:hex, :statix, "1.0.1", "04600d22f44456544cf8b7363b3e3872419b0e0db898d7c373eef098ac7f1200", [:mix], [], "hexpm"},
+  "statix": {:hex, :statix, "1.2.1", "4f23c8cc2477ea0de89fed5e34f08c54b0d28b838f7b8f26613155f2221bb31e", [:mix], [], "hexpm"},
 }

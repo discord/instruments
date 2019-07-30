@@ -50,7 +50,7 @@ defmodule Instruments.Mixfile do
     [
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:recon, "~> 2.3.1"},
-      {:statix, "~> 1.0.1"},
+      {:statix, "~> 1.2.1"},
     ]
   end
 
