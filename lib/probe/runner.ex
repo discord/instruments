@@ -132,6 +132,9 @@ defmodule Instruments.Probe.Runner do
           send_metric(metric_name, value, state)
         end)
 
+      :undefined ->
+        Logger.info "Not Sending #{state.name} due to :undefined return"
+        
       nil ->
         Logger.info "Not Sending #{state.name} due to nil return"
     end
