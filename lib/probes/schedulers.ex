@@ -75,7 +75,7 @@ defmodule Instruments.Probes.Schedulers do
   end
 
   @doc false
-  def probe_handle_msg(_, state), do: {:ok, state}
+  def probe_handle_message(_, state), do: {:ok, state}
 
   # end probe behaviour callbacks
 

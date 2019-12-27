@@ -167,24 +167,50 @@ defmodule Instruments.ProbeTest do
 
   describe "probes in a module" do
     defmodule ModuleProbe do
+      @behaviour Instruments.Probe
+
+      @impl Instruments.Probe
       def probe_init(_name, _type, _opts), do: {:ok, 0}
+
+      @impl Instruments.Probe
       def probe_get_value(state), do: {:ok, state}
+
+      @impl Instruments.Probe
       def probe_reset(_), do: {:ok, 0}
+
+      @impl Instruments.Probe
       def probe_sample(state), do: {:ok, state + 1}
+
+      @impl Instruments.Probe
       def probe_handle_message(_msg, state), do: {:ok, state}
+
       def probe_get_datapoints(_), do: [:foo]
     end
 
     defmodule MessageProbe do
+      @behaviour Instruments.Probe
+
+      @impl Instruments.Probe
       def probe_init(_name, _type, _opts), do: {:ok, 1}
+
+      @impl Instruments.Probe
       def probe_get_value(state), do: {:ok, state}
+
+      @impl Instruments.Probe
       def probe_reset(_), do: {:ok, 0}
+
+      @impl Instruments.Probe
       def probe_sample(state) do
         send(self(), {:do_update, 6})
         {:ok, state}
       end
+
+      @impl Instruments.Probe
       def probe_handle_message({:do_update, val}, _state), do: {:ok, val}
+
+      @impl Instruments.Probe
       def probe_handle_message(_msg, state), do: {:ok, state}
+
       def probe_get_datapoints(_), do: [:foo]
     end
 
