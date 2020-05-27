@@ -228,16 +228,16 @@ defmodule Instruments.ProbeTest do
     end
 
     test "it should not let you define two probes that have the same name and the same tags" do
+      Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagC])
       assert_raise ProbeNameTakenError, fn ->
-        Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagC])
         Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagC])
       end
     end
 
     test "it should not let you define two probes that have the same name any shared tags" do
+      Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagE, :tagF])
       assert_raise ProbeNameTakenError, fn ->
-        Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagC, :tagD])
-        Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagE, :tagC])
+        Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagG, :tagE])
       end
     end
   end
