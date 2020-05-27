@@ -102,7 +102,15 @@ defmodule Instruments do
   aggregated percentages, and are often used when recording timings.
   """
   defmacro histogram(key, value, options \\ []),
-    do: MacroHelpers.build_metric_macro(:histogram, __CALLER__, @metrics_module, key, value, options)
+    do:
+      MacroHelpers.build_metric_macro(
+        :histogram,
+        __CALLER__,
+        @metrics_module,
+        key,
+        value,
+        options
+      )
 
   @doc """
   Reports a timed value
@@ -123,7 +131,7 @@ defmodule Instruments do
 
   """
   defmacro set(key, value, options \\ []),
-    do: MacroHelpers.build_metric_macro(:set,__CALLER__, @metrics_module, key, value, options)
+    do: MacroHelpers.build_metric_macro(:set, __CALLER__, @metrics_module, key, value, options)
 
   @doc """
   Times the function `function` and returns its result
@@ -145,21 +153,39 @@ defmodule Instruments do
 
   """
   defmacro measure(key, options \\ [], function),
-    do: MacroHelpers.build_metric_macro(:measure, __CALLER__, @metrics_module, key, options, function)
+    do:
+      MacroHelpers.build_metric_macro(
+        :measure,
+        __CALLER__,
+        @metrics_module,
+        key,
+        options,
+        function
+      )
 
   @doc """
   Sends an event to DataDog
 
   This function is useful if you want to record one-off events like deploys or metrics values changing.
   """
-  @spec send_event(iodata, iodata, Statix.options) :: :ok
+  @spec send_event(iodata, iodata, Statix.options()) :: :ok
   defmacro send_event(title_ast, text, opts \\ []) do
     title_iodata = MacroHelpers.to_iolist(title_ast, __CALLER__)
 
     quote do
       title = unquote(title_iodata)
-      header = ["_e{", Integer.to_charlist(IO.iodata_length(title)), ",",
-                Integer.to_charlist(IO.iodata_length(unquote(text))), "}:", title, "|", unquote(text)]
+
+      header = [
+        "_e{",
+        Integer.to_charlist(IO.iodata_length(title)),
+        ",",
+        Integer.to_charlist(IO.iodata_length(unquote(text))),
+        "}:",
+        title,
+        "|",
+        unquote(text)
+      ]
+
       message =
         case Keyword.get(unquote(opts), :tags) do
           nil ->
@@ -167,7 +193,6 @@ defmodule Instruments do
 
           tag_list ->
             [header, "|#", Enum.intersperse(tag_list, ",")]
-
         end
 
       # Statix registers a port to the name of the metrics module.
@@ -175,7 +200,7 @@ defmodule Instruments do
       # a port, and sends directly to it. If we move off of Statix,
       # this will have to be changed.
       unquote(@metrics_module)
-      |> Process.whereis
+      |> Process.whereis()
       |> :gen_udp.send('localhost', Instruments.statsd_port(), message)
     end
   end
@@ -183,8 +208,8 @@ defmodule Instruments do
   @doc false
   def flush_all_probes(wait_for_flush \\ true, flush_timeout_ms \\ 10_000) do
     Probe.Supervisor
-    |> Process.whereis
-    |> Supervisor.which_children
+    |> Process.whereis()
+    |> Supervisor.which_children()
     |> Enum.each(fn {_, pid, _, _module} ->
       Probe.Runner.flush(pid)
     end)
@@ -204,7 +229,7 @@ defmodule Instruments do
     1. `erlang.statistics.run_queue`: A gauge reporting the VM's run queue. This number should be 0 or very low. A high run queue indicates your system is overloaded.
     1. `erlang.scheduler_utilization`: A gauge that reports the actual utilization of every scheduler in the system. See `Instruments.Probes.Schedulers` for more information
   """
-  @spec register_vm_metrics(Number.t) :: :ok
+  @spec register_vm_metrics(Number.t()) :: :ok
   def register_vm_metrics(report_interval \\ 10000) do
     # VM memory.
     # processes = used by Erlang processes, their stacks and heaps.
@@ -215,14 +240,16 @@ defmodule Instruments do
     Probe.define!("erlang.memory", :gauge,
       mfa: {:erlang, :memory, []},
       keys: ~w(processes system atom binary ets)a,
-      report_interval: report_interval)
+      report_interval: report_interval
+    )
 
     # Memory actively used by the VM, allocated (should ~match OS allocation),
     # unused (i.e. allocated - used), and usage (used / allocated).
     alloc_keys = ~w(used allocated unused usage)a
+
     Probe.define!("recon.alloc", :gauge,
       function: fn ->
-        for type <- alloc_keys, into: Keyword.new do
+        for type <- alloc_keys, into: Keyword.new() do
           {type, :recon_alloc.memory(type)}
         end
       end,
@@ -233,6 +260,7 @@ defmodule Instruments do
     # process_count = current number of processes.
     # port_count = current number of ports.
     system_keys = ~w(process_count port_count)a
+
     Probe.define!("erlang.system", :gauge,
       function: fn ->
         for key <- system_keys do
@@ -240,18 +268,21 @@ defmodule Instruments do
         end
       end,
       keys: system_keys,
-      report_interval: report_interval)
+      report_interval: report_interval
+    )
 
     # The number of processes that are ready to run on all available run queues.
     Probe.define!("erlang.statistics.run_queue", :gauge,
       mfa: {:erlang, :statistics, [:run_queue]},
-      report_interval: report_interval)
+      report_interval: report_interval
+    )
 
-    Probe.define!("erlang.scheduler_utilization", :gauge, module: Probes.Schedulers,
+    Probe.define!("erlang.scheduler_utilization", :gauge,
+      module: Probes.Schedulers,
       keys: ~w(weighted total)a,
-      report_interval: report_interval)
+      report_interval: report_interval
+    )
 
     :ok
   end
-
 end

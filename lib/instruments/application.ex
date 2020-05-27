@@ -2,6 +2,7 @@ defmodule Instruments.Application do
   @moduledoc false
 
   use Application
+
   alias Instruments.{
     FastCounter,
     Probe

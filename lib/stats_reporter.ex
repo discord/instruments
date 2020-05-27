@@ -7,7 +7,7 @@ defmodule Instruments.StatsReporter do
   and `Instruments.StatsReporter.Null`reporters.
   """
 
-  @type key :: String.t
+  @type key :: String.t()
   @type stats_return :: :ok | {:error, term}
 
   @doc """

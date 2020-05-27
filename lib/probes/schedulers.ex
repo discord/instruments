@@ -39,11 +39,13 @@ defmodule Instruments.Probes.Schedulers do
 
   @doc false
   def probe_get_value(%{wall_time: new_wall_time, old_wall_time: old_wall_time}) do
-    {active, total} = old_wall_time
-    |> Enum.zip(new_wall_time)
-    |> Enum.reduce({0, 0}, fn({{_, old_active, old_total}, {_, new_active, new_total}}, {active, total}) ->
-      {active + (new_active - old_active), total + (new_total - old_total)}
-    end)
+    {active, total} =
+      old_wall_time
+      |> Enum.zip(new_wall_time)
+      |> Enum.reduce({0, 0}, fn {{_, old_active, old_total}, {_, new_active, new_total}},
+                                {active, total} ->
+        {active + (new_active - old_active), total + (new_total - old_total)}
+      end)
 
     # this alogrithm taken from http://erlang.org/doc/man/erlang.html#statistics_scheduler_wall_time
     stats =
@@ -52,14 +54,16 @@ defmodule Instruments.Probes.Schedulers do
           [weighted: 0.0, total: 0.0]
 
         _ ->
-
           total_scheduler_utilization = active / total
-          weighted_utilization = (total_scheduler_utilization * total_scheduler_count()) / logical_processor_count()
+
+          weighted_utilization =
+            total_scheduler_utilization * total_scheduler_count() / logical_processor_count()
+
           weighted_utilization_percent = Float.round(weighted_utilization * 100, 3)
 
           [
             weighted: weighted_utilization_percent,
-            total: (Float.round(total_scheduler_utilization * 100, 3)),
+            total: Float.round(total_scheduler_utilization * 100, 3)
           ]
       end
 
@@ -70,7 +74,7 @@ defmodule Instruments.Probes.Schedulers do
   def probe_reset(state), do: {:ok, state}
 
   @doc false
-  def probe_sample(%{wall_time: old_wall_time}=state) do
+  def probe_sample(%{wall_time: old_wall_time} = state) do
     {:ok, %{state | old_wall_time: old_wall_time, wall_time: calculate_wall_time()}}
   end
 
@@ -82,8 +86,8 @@ defmodule Instruments.Probes.Schedulers do
   # Private
   defp calculate_wall_time() do
     :scheduler_wall_time
-      |> :erlang.statistics
-      |> Enum.sort
+    |> :erlang.statistics()
+    |> Enum.sort()
   end
 
   defp total_scheduler_count() do
@@ -93,8 +97,9 @@ defmodule Instruments.Probes.Schedulers do
   defp dirty_scheduler_count() do
     try do
       :erlang.system_info(:dirty_cpu_schedulers)
-    rescue ArgumentError ->
-      0
+    rescue
+      ArgumentError ->
+        0
     end
   end
 

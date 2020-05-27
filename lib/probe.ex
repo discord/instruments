@@ -15,20 +15,20 @@ defmodule Instruments.Probe do
 
   """
 
-  @type datapoint :: String.t
+  @type datapoint :: String.t()
   @type state :: any
   @type probe_value :: number | keyword
   @type probe_type :: :counter | :spiral | :gauge | :histogram | :timing | :set
   @type probe_options :: [
-    {:sample_rate, pos_integer} |
-    {:tags, [String.t, ...]} |
-    {:report_interval, pos_integer} |
-    {:sample_interval, pos_integer} |
-    {:function, (() -> {:ok, state})} |
-    {:mfa, mfa} |
-    {:module, module} |
-    {:keys, [atom]}
-  ]
+          {:sample_rate, pos_integer}
+          | {:tags, [String.t(), ...]}
+          | {:report_interval, pos_integer}
+          | {:sample_interval, pos_integer}
+          | {:function, (() -> {:ok, state})}
+          | {:mfa, mfa}
+          | {:module, module}
+          | {:keys, [atom]}
+        ]
 
   @doc """
   Called when the probe is created. The callback is passed
@@ -39,7 +39,7 @@ defmodule Instruments.Probe do
   subsequent callbacks. Any other return values will cancel further
   execution of the probe.
   """
-  @callback probe_init(String.t, probe_type, probe_options) :: {:ok, state}
+  @callback probe_init(String.t(), probe_type, probe_options) :: {:ok, state}
 
   @doc """
   Called every `sample_interval` milliseconds. When called, the probe should

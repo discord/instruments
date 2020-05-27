@@ -8,7 +8,11 @@ defmodule Instruments.FastCounter do
 
   @table_prefix :instruments_counters
   @max_tables 128
-  @fast_counter_report_interval Application.get_env(:instruments, :fast_counter_report_interval, 10_000)
+  @fast_counter_report_interval Application.get_env(
+                                  :instruments,
+                                  :fast_counter_report_interval,
+                                  10_000
+                                )
 
   use GenServer
 
@@ -33,12 +37,12 @@ defmodule Instruments.FastCounter do
 
   @spec increment(iodata) :: :ok
   @spec increment(iodata, integer) :: :ok
-  @spec increment(iodata, integer, Statix.options) :: :ok
+  @spec increment(iodata, integer, Statix.options()) :: :ok
   def increment(name, amount \\ 1, options \\ []) do
     table_key =
       case Keyword.get(options, :tags) do
         tags when is_list(tags) ->
-          {name, Keyword.merge(options, [tags: Enum.sort(tags)])}
+          {name, Keyword.merge(options, tags: Enum.sort(tags))}
 
         _ ->
           {name, options}
@@ -50,34 +54,34 @@ defmodule Instruments.FastCounter do
 
   @spec decrement(iodata) :: :ok
   @spec decrement(iodata, integer) :: :ok
-  @spec decrement(iodata, integer, Statix.options) :: :ok
+  @spec decrement(iodata, integer, Statix.options()) :: :ok
   def decrement(name, amount \\ 1, options \\ []),
     do: increment(name, -amount, options)
 
   ## GenServer callbacks
-  def handle_info(:report, {reporter_module, table_count}=state) do
-
+  def handle_info(:report, {reporter_module, table_count} = state) do
     # dump the scheduler's data and decrement its
     # counters by the amount we dumped.
-    dump_and_flush_data = fn(scheduler_id) ->
+    dump_and_flush_data = fn scheduler_id ->
       table_name = table_name(scheduler_id)
       table_data = :ets.tab2list(table_name)
 
       Enum.each(table_data, fn {key, val} ->
         :ets.update_counter(table_name, key, -val)
       end)
+
       table_data
     end
 
     # aggregates each scheduler's table into one metric
-    aggregate_stats = fn({key, val}, acc) ->
+    aggregate_stats = fn {key, val}, acc ->
       Map.update(acc, key, val, &(&1 + val))
     end
 
     1..table_count
-      |> Enum.flat_map(dump_and_flush_data)
-      |> Enum.reduce(%{}, aggregate_stats)
-      |> Enum.each(&report_stat(&1, reporter_module))
+    |> Enum.flat_map(dump_and_flush_data)
+    |> Enum.reduce(%{}, aggregate_stats)
+    |> Enum.each(&report_stat(&1, reporter_module))
 
     schedule_report()
     {:noreply, state}
@@ -87,12 +91,14 @@ defmodule Instruments.FastCounter do
 
   defp report_stat({_key, 0}, _),
     do: :ok
+
   defp report_stat({{metric_name, opts}, value}, reporter_module) when value < 0 do
     # this -value looks like a bug, but isn't. Since we're aggregating
     # counters, the value could be negative, but the decrement
     # operation takes positive values.
     reporter_module.decrement(metric_name, -value, opts)
   end
+
   defp report_stat({{metric_name, opts}, value}, reporter_module) when value > 0 do
     reporter_module.increment(metric_name, value, opts)
   end
@@ -105,7 +111,7 @@ defmodule Instruments.FastCounter do
     table_name(:erlang.system_info(:scheduler_id))
   end
 
-  for scheduler_id <- (1..@max_tables) do
+  for scheduler_id <- 1..@max_tables do
     defp table_name(unquote(scheduler_id)) do
       unquote(:"#{@table_prefix}_#{scheduler_id}")
     end

@@ -5,13 +5,16 @@ defmodule Instruments.MacroHelpers do
 
   def build_metric_macro(:measure, caller, metrics_module, key_ast, options_ast, function) do
     key = to_iolist(key_ast, caller)
+
     quote do
       safe_opts = unquote(to_safe_options(:measure, options_ast))
       unquote(metrics_module).measure(unquote(key), safe_opts, unquote(function))
     end
   end
+
   def build_metric_macro(type, caller, metrics_module, key_ast, value_ast, options_ast) do
     key = to_iolist(key_ast, caller)
+
     quote do
       safe_opts = unquote(to_safe_options(type, options_ast))
       unquote(metrics_module).unquote(type)(unquote(key), unquote(value_ast), safe_opts)
@@ -29,7 +32,8 @@ defmodule Instruments.MacroHelpers do
       bitstring
   """
   def to_iolist({var_name, [line: line], mod}, caller) when is_atom(var_name) and is_atom(mod) do
-    raise CompileError, description: "Metric keys must be defined statically",
+    raise CompileError,
+      description: "Metric keys must be defined statically",
       line: line,
       file: caller.file
   end
@@ -48,11 +52,11 @@ defmodule Instruments.MacroHelpers do
   end
 
   # Parses string literals
-  defp parse_iolist(string_literal=ast, acc) when is_bitstring(string_literal),
+  defp parse_iolist(string_literal = ast, acc) when is_bitstring(string_literal),
     do: {ast, [string_literal | acc]}
 
   # This handles the `Kernel.to_string` call that string interpolation emits
-  defp parse_iolist({{:., _ctx, [Kernel, :to_string]}, _, [_var]}=to_string_call, acc),
+  defp parse_iolist({{:., _ctx, [Kernel, :to_string]}, _, [_var]} = to_string_call, acc),
     do: {nil, [to_string_call | acc]}
 
   # this head handles string concatenation with <>

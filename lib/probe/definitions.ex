@@ -5,13 +5,14 @@ defmodule Instruments.Probe.Definitions do
   alias Instruments.Probe
   alias Instruments.Probe.Errors
 
-  @type definition_errors :: {:error, {:probe_names_taken, [String.t]}}
-  @type definition_response :: {:ok, [String.t]} | definition_errors
+  @type definition_errors :: {:error, {:probe_names_taken, [String.t()]}}
+  @type definition_response :: {:ok, [String.t()]} | definition_errors
 
   @probe_prefix Application.get_env(:instruments, :probe_prefix)
   @table_name :probe_definitions
 
   def start_link(), do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
+
   def init([]) do
     table_name = @table_name
     ^table_name = :ets.new(table_name, [:named_table, :set, :protected, read_concurrency: true])
@@ -22,7 +23,7 @@ defmodule Instruments.Probe.Definitions do
   Defines a probe. If the definition fails, an exception is thrown.
   @see define/3
   """
-  @spec define!(String.t, Probe.probe_type, Probe.probe_options) :: [String.t]
+  @spec define!(String.t(), Probe.probe_type(), Probe.probe_options()) :: [String.t()]
   def define!(name, type, options) do
     case define(name, type, options) do
       {:ok, probe_names} ->
@@ -46,7 +47,7 @@ defmodule Instruments.Probe.Definitions do
 
   Returns `{:ok, [probe_name]}` or `{:error, reason}`.
   """
-  @spec define(String.t, Probe.probe_type, Probe.probe_options) :: definition_response
+  @spec define(String.t(), Probe.probe_type(), Probe.probe_options()) :: definition_response
   def define(base_name, type, options) do
     name = to_probe_name(@probe_prefix, base_name)
 
@@ -84,10 +85,12 @@ defmodule Instruments.Probe.Definitions do
     response =
       case used_probe_names(probe_names) do
         [] ->
-          added_probes = Enum.map(probe_names, fn probe_name ->
-          true = :ets.insert_new(@table_name, {probe_name, probe_name})
-          probe_name
-        end)
+          added_probes =
+            Enum.map(probe_names, fn probe_name ->
+              true = :ets.insert_new(@table_name, {probe_name, probe_name})
+              probe_name
+            end)
+
           transaction.()
           {:ok, added_probes}
 
@@ -100,8 +103,8 @@ defmodule Instruments.Probe.Definitions do
 
   defp used_probe_names(probe_names) do
     probe_names
-      |> Enum.map(&:ets.match(@table_name, {&1, :"$1"}))
-      |> List.flatten
+    |> Enum.map(&:ets.match(@table_name, {&1, :"$1"}))
+    |> List.flatten()
   end
 
   def to_probe_name(nil, base_name), do: base_name

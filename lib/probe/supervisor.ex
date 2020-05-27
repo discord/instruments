@@ -15,6 +15,6 @@ defmodule Instruments.Probe.Supervisor do
   end
 
   def start_probe(name, type, options, probe_module) do
-   Supervisor.start_child(__MODULE__, [name, type, options, probe_module])
+    Supervisor.start_child(__MODULE__, [name, type, options, probe_module])
   end
 end

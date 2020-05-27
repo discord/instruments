@@ -10,36 +10,37 @@ defmodule Instruments.Probe.Runner do
     @moduledoc false
 
     @type t :: %{
-      name: String.t,
-      datapoints: [atom],
-      reporter_options: Instruments.Probe.probe_options,
-      report_integer: pos_integer,
-      sample_interval: pos_integer,
-      probe_module: module,
-      probe_state: any
-    }
+            name: String.t(),
+            datapoints: [atom],
+            reporter_options: Instruments.Probe.probe_options(),
+            report_integer: pos_integer,
+            sample_interval: pos_integer,
+            probe_module: module,
+            probe_state: any
+          }
 
     defstruct name: nil,
-      type: nil,
-      datapoints: %{},
-      reporter_module: nil,
-      reporter_options: [],
-      report_interval: 1_000,
-      sample_interval: 1_000,
-      probe_module: nil,
-      probe_state: nil
-
+              type: nil,
+              datapoints: %{},
+              reporter_module: nil,
+              reporter_options: [],
+              report_interval: 1_000,
+              sample_interval: 1_000,
+              probe_module: nil,
+              probe_state: nil
 
     def new(metric_name, type, options, probe_module) do
       report_interval = Keyword.get(options, :report_interval, 10_000)
       sample_interval = Keyword.get(options, :sample_interval, report_interval)
-      datapoints = if Keyword.has_key?(options, :keys) do
-        for key <- Keyword.get(options, :keys), into: %{} do
-          {key, "#{metric_name}.#{key}"}
+
+      datapoints =
+        if Keyword.has_key?(options, :keys) do
+          for key <- Keyword.get(options, :keys), into: %{} do
+            {key, "#{metric_name}.#{key}"}
+          end
+        else
+          %{metric_name => metric_name}
         end
-      else
-        %{metric_name => metric_name}
-      end
 
       %__MODULE__{
         name: metric_name,
@@ -55,8 +56,8 @@ defmodule Instruments.Probe.Runner do
 
     defp sanitize_reporter_options(options) do
       [sample_rate: 1.0]
-        |> Keyword.merge(options)
-        |> Keyword.take([:sample_rate, :tags])
+      |> Keyword.merge(options)
+      |> Keyword.take([:sample_rate, :tags])
     end
   end
 
@@ -64,7 +65,7 @@ defmodule Instruments.Probe.Runner do
   use GenServer
   require Logger
 
-  @spec start_link(String.t, Probe.probe_type, Probe.probe_options, module) :: {:ok, pid}
+  @spec start_link(String.t(), Probe.probe_type(), Probe.probe_options(), module) :: {:ok, pid}
   def start_link(name, type, options, probe_module) do
     GenServer.start_link(__MODULE__, {name, type, options, probe_module})
   end
@@ -82,7 +83,7 @@ defmodule Instruments.Probe.Runner do
     {:ok, %State{state | probe_state: probe_state}}
   end
 
-  def handle_call(:flush, _from, %State{}=state) do
+  def handle_call(:flush, _from, %State{} = state) do
     {:ok, new_probe_state} = state.probe_module.probe_sample(state.probe_state)
     new_state = %State{state | probe_state: new_probe_state}
     do_probe_update(new_state)
@@ -90,28 +91,30 @@ defmodule Instruments.Probe.Runner do
     {:reply, :ok, new_state}
   end
 
-  def handle_info(:probe_sample, %State{}=state) do
+  def handle_info(:probe_sample, %State{} = state) do
     {:ok, new_probe_state} = state.probe_module.probe_sample(state.probe_state)
     Process.send_after(self(), :probe_sample, state.sample_interval)
 
     {:noreply, %State{state | probe_state: new_probe_state}}
   end
 
-  def handle_info(:probe_update, %State{}=state) do
+  def handle_info(:probe_update, %State{} = state) do
     do_probe_update(state)
 
     Process.send_after(self(), :probe_update, state.report_interval)
     {:noreply, state}
   end
 
-  def handle_info(unknown_message, %{}=state) do
-    {:ok, new_probe_state} = state.probe_module.probe_handle_message(unknown_message, state.probe_state)
+  def handle_info(unknown_message, %{} = state) do
+    {:ok, new_probe_state} =
+      state.probe_module.probe_handle_message(unknown_message, state.probe_state)
+
     {:noreply, %State{state | probe_state: new_probe_state}}
   end
 
   # Private
 
-  defp do_probe_update(%State{}=state) do
+  defp do_probe_update(%State{} = state) do
     {:ok, values} = state.probe_module.probe_get_value(state.probe_state)
 
     case values do
@@ -123,8 +126,8 @@ defmodule Instruments.Probe.Runner do
       values when is_list(values) ->
         Enum.each(state.datapoints, fn {key, metric_name} ->
           values
-            |> Keyword.get_values(key)
-            |> Enum.each(&send_metric(metric_name, &1, state))
+          |> Keyword.get_values(key)
+          |> Enum.each(&send_metric(metric_name, &1, state))
         end)
 
       value when is_number(value) ->
@@ -133,22 +136,28 @@ defmodule Instruments.Probe.Runner do
         end)
 
       nil ->
-        Logger.info "Not Sending #{state.name} due to nil return"
+        Logger.info("Not Sending #{state.name} due to nil return")
     end
   end
 
   defp send_metric(_metric_name, 0, %State{type: :counter}),
     do: :ok
 
-  defp send_metric(metric_name, metric_value, %State{type: :counter}=state) when metric_value > 0 do
+  defp send_metric(metric_name, metric_value, %State{type: :counter} = state)
+       when metric_value > 0 do
     send_metric(metric_name, metric_value, %State{state | type: :increment})
   end
 
-  defp send_metric(metric_name, metric_value, %State{type: :counter}=state) when metric_value < 0 do
+  defp send_metric(metric_name, metric_value, %State{type: :counter} = state)
+       when metric_value < 0 do
     send_metric(metric_name, abs(metric_value), %State{state | type: :decrement})
   end
 
-  defp send_metric(metric_name, %Probe.Value{value: value, tags: tags, sample_rate: sample_rate}, %State{}=state) do
+  defp send_metric(
+         metric_name,
+         %Probe.Value{value: value, tags: tags, sample_rate: sample_rate},
+         %State{} = state
+       ) do
     tags =
       case tags do
         tags when is_list(tags) ->
@@ -167,12 +176,17 @@ defmodule Instruments.Probe.Runner do
           Keyword.get(state.reporter_options, :sample_rate, 1.0)
       end
 
-    new_opts = Keyword.merge(state.reporter_options, [tags: tags, sample_rate: sample_rate])
+    new_opts = Keyword.merge(state.reporter_options, tags: tags, sample_rate: sample_rate)
     send_metric(metric_name, value, %State{state | reporter_options: new_opts})
   end
 
-  defp send_metric(metric_name, metric_value, %State{}=state) when is_number(metric_value) do
-    :erlang.apply(state.reporter_module, state.type, [metric_name, metric_value, state.reporter_options])
+  defp send_metric(metric_name, metric_value, %State{} = state) when is_number(metric_value) do
+    :erlang.apply(state.reporter_module, state.type, [
+      metric_name,
+      metric_value,
+      state.reporter_options
+    ])
+
     :ok
   end
 
