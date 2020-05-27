@@ -69,7 +69,7 @@ defmodule Instruments.Probe.Definitions do
       end
     end
 
-    definitions =
+    probe_names =
       case Keyword.get(options, :keys) do
         keys when is_list(keys) ->
           Enum.map(keys, fn key -> "#{name}.#{key}" end)
@@ -78,21 +78,23 @@ defmodule Instruments.Probe.Definitions do
           [name]
       end
 
-    GenServer.call(__MODULE__, {:define, definitions, defn_fn})
+    unique_names = unique_names(probe_names, options)
+
+    GenServer.call(__MODULE__, {:define, probe_names, unique_names, defn_fn})
   end
 
-  def handle_call({:define, probe_names, transaction}, _from, _) do
+  @spec handle_call({:define, [String.t()], [String.t()], (() -> any)}, any, any) ::
+          {:ok, [String.t()]} | {:error, {:probe_names_taken, [String.t()]}}
+  def handle_call({:define, probe_names, unique_names, transaction}, _from, _) do
     response =
-      case used_probe_names(probe_names) do
+      case used_probe_names(unique_names) do
         [] ->
-          added_probes =
-            Enum.map(probe_names, fn probe_name ->
-              true = :ets.insert_new(@table_name, {probe_name, probe_name})
-              probe_name
-            end)
+          for unique_name <- unique_names do
+            true = :ets.insert_new(@table_name, {unique_name, unique_name})
+          end
 
           transaction.()
-          {:ok, added_probes}
+          {:ok, probe_names}
 
         used_probe_names ->
           {:error, {:probe_names_taken, used_probe_names}}
@@ -101,8 +103,22 @@ defmodule Instruments.Probe.Definitions do
     {:reply, response, nil}
   end
 
-  defp used_probe_names(probe_names) do
-    probe_names
+  @spec unique_names([String.t()], Probe.probe_options()) :: [String.t()]
+  defp unique_names(probe_names, options) do
+    case Keyword.get(options, :tags) do
+      tags when is_list(tags) ->
+        for probe_name <- probe_names, tag <- tags do
+          "#{probe_name}.tag:#{tag}"
+        end
+
+      nil ->
+        probe_names
+    end
+  end
+
+  @spec used_probe_names([String.t()]) :: [String.t()]
+  defp used_probe_names(unique_names) do
+    unique_names
     |> Enum.map(&:ets.match(@table_name, {&1, :"$1"}))
     |> List.flatten()
   end
