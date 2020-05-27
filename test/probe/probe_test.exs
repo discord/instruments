@@ -92,6 +92,23 @@ defmodule Instruments.ProbeTest do
         sample_rate: 1.0
       )
     end
+
+    test "it should allow probes to report under the same name with different tags" do
+      Probe.define("different.tags", :gauge,
+        function: fn -> 1000 end,
+        tags: ["tag.a"],
+        report_interval: 20
+      )
+
+      Probe.define("different.tags", :gauge,
+        function: fn -> 1 end,
+        tags: ["tag.b"],
+        report_interval: 20
+      )
+
+      assert_metric_reported(:gauge, "different.tags", 1000, tags: ["tag.a"], sample_rate: 1.0)
+      assert_metric_reported(:gauge, "different.tags", 1, tags: ["tag.b"], sample_rate: 1.0)
+    end
   end
 
   describe "probes with mfa" do
@@ -202,6 +219,25 @@ defmodule Instruments.ProbeTest do
           function: fn -> [keys: 10, values: 11] end,
           keys: [:keys, :values]
         )
+      end
+    end
+
+    test "it should let you define two probes that have the same name but different tags" do
+      Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagA])
+      Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagB])
+    end
+
+    test "it should not let you define two probes that have the same name and the same tags" do
+      Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagC])
+      assert_raise ProbeNameTakenError, fn ->
+        Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagC])
+      end
+    end
+
+    test "it should not let you define two probes that have the same name any shared tags" do
+      Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagE, :tagF])
+      assert_raise ProbeNameTakenError, fn ->
+        Probe.define!("probe.with.tags", :gauge, function: fn -> 9 end, tags: [:tagG, :tagE])
       end
     end
   end

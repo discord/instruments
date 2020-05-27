@@ -78,9 +78,13 @@ defmodule Instruments.Probe.Definitions do
           [name]
       end
 
-    GenServer.call(__MODULE__, {:define, definitions, defn_fn})
+    unique_names = unique_names(definitions, options)
+
+    GenServer.call(__MODULE__, {:define, unique_names, defn_fn})
   end
 
+  @spec handle_call({:define, [String.t()], (() -> any)}, any, any) ::
+          {:ok, [String.t()]} | {:error, {:probe_names_taken, [String.t()]}}
   def handle_call({:define, probe_names, transaction}, _from, _) do
     response =
       case used_probe_names(probe_names) do
@@ -101,6 +105,20 @@ defmodule Instruments.Probe.Definitions do
     {:reply, response, nil}
   end
 
+  @spec unique_names([String.t()], Probe.probe_options()) :: [String.t()]
+  defp unique_names(probe_names, options) do
+    case Keyword.get(options, :tags) do
+      tags when is_list(tags) ->
+        for probe_name <- probe_names, tag <- tags do
+          "#{probe_name}.tag:#{tag}"
+        end
+
+      nil ->
+        probe_names
+    end
+  end
+
+  @spec used_probe_names([String.t()]) :: [String.t()]
   defp used_probe_names(probe_names) do
     probe_names
     |> Enum.map(&:ets.match(@table_name, {&1, :"$1"}))
