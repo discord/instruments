@@ -69,7 +69,7 @@ defmodule Instruments.Probe.Definitions do
       end
     end
 
-    probe_names =
+    definitions =
       case Keyword.get(options, :keys) do
         keys when is_list(keys) ->
           Enum.map(keys, fn key -> "#{name}.#{key}" end)
@@ -78,23 +78,25 @@ defmodule Instruments.Probe.Definitions do
           [name]
       end
 
-    unique_names = unique_names(probe_names, options)
+    unique_names = unique_names(definitions, options)
 
-    GenServer.call(__MODULE__, {:define, probe_names, unique_names, defn_fn})
+    GenServer.call(__MODULE__, {:define, unique_names, defn_fn})
   end
 
-  @spec handle_call({:define, [String.t()], [String.t()], (() -> any)}, any, any) ::
+  @spec handle_call({:define, [String.t()], (() -> any)}, any, any) ::
           {:ok, [String.t()]} | {:error, {:probe_names_taken, [String.t()]}}
-  def handle_call({:define, probe_names, unique_names, transaction}, _from, _) do
+  def handle_call({:define, probe_names, transaction}, _from, _) do
     response =
-      case used_probe_names(unique_names) do
+      case used_probe_names(probe_names) do
         [] ->
-          for unique_name <- unique_names do
-            true = :ets.insert_new(@table_name, {unique_name, unique_name})
-          end
+          added_probes =
+            Enum.map(probe_names, fn probe_name ->
+              true = :ets.insert_new(@table_name, {probe_name, probe_name})
+              probe_name
+            end)
 
           transaction.()
-          {:ok, probe_names}
+          {:ok, added_probes}
 
         used_probe_names ->
           {:error, {:probe_names_taken, used_probe_names}}
@@ -117,8 +119,8 @@ defmodule Instruments.Probe.Definitions do
   end
 
   @spec used_probe_names([String.t()]) :: [String.t()]
-  defp used_probe_names(unique_names) do
-    unique_names
+  defp used_probe_names(probe_names) do
+    probe_names
     |> Enum.map(&:ets.match(@table_name, {&1, :"$1"}))
     |> List.flatten()
   end
