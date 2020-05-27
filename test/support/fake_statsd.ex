@@ -37,31 +37,35 @@ defmodule FakeStatsd do
   defp do_decode(name, val, "g", opts) do
     {:gauge, name, to_number(val), opts}
   end
+
   defp do_decode(name, val, "ms", opts) do
     {:timing, name, to_number(val), opts}
   end
+
   defp do_decode(name, val, "s", opts) do
     {:set, name, to_number(val), opts}
   end
+
   defp do_decode(name, val, "h", opts) do
     {:histogram, name, to_number(val), opts}
   end
+
   defp do_decode(name, val, "c", opts) do
     {type, numeric_val} =
       case to_number(val) do
         v when v >= 0 ->
           {:increment, v}
 
-          v ->
+        v ->
           {:decrement, -v}
       end
 
     {type, name, numeric_val, opts}
   end
+
   defp do_decode(:event, name, val, opts) do
     {:event, name, val, opts}
   end
-
 
   defp decode_tags_and_sampling(tags_and_sampling),
     do: decode_tags_and_sampling(tags_and_sampling, [])
@@ -77,7 +81,7 @@ defmodule FakeStatsd do
 
   defp decode_tags_and_sampling([<<"@", sampling::binary>> | rest], accum) do
     sample_rate = String.to_float(sampling)
-    decode_tags_and_sampling(rest,  Keyword.put(accum, :sample_rate, sample_rate))
+    decode_tags_and_sampling(rest, Keyword.put(accum, :sample_rate, sample_rate))
   end
 
   defp decode_name_and_value(<<"_e", rest::binary>>) do
@@ -85,6 +89,7 @@ defmodule FakeStatsd do
 
     {:event, title}
   end
+
   defp decode_name_and_value(name_and_val) do
     [name, value] = String.split(name_and_val, ":")
     {name, value}
@@ -93,7 +98,8 @@ defmodule FakeStatsd do
   defp to_number(s) do
     with {int_val, ""} <- Integer.parse(s) do
       int_val
-    else _ ->
+    else
+      _ ->
         case Float.parse(s) do
           {float_val, ""} ->
             float_val

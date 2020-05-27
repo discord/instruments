@@ -10,9 +10,9 @@ defmodule Instruments.Mixfile do
       name: "Instruments",
       version: @version,
       elixir: "~> 1.3",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
-      elixirc_paths: compile_paths(Mix.env),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      elixirc_paths: compile_paths(Mix.env()),
       deps: deps(),
       docs: docs(),
       package: package(),
@@ -27,8 +27,7 @@ defmodule Instruments.Mixfile do
         "pages/Configuration.md",
         "pages/Probes.md",
         "pages/Performance.md"
-      ],
-
+      ]
     ]
   end
 
@@ -42,6 +41,7 @@ defmodule Instruments.Mixfile do
   def compile_paths(:test) do
     default_compile_path() ++ ["test/support"]
   end
+
   def compile_paths(_), do: default_compile_path()
 
   defp default_compile_path(), do: ["lib"]
@@ -50,7 +50,7 @@ defmodule Instruments.Mixfile do
     [
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:recon, "~> 2.3.1"},
-      {:statix, "~> 1.2.1"},
+      {:statix, "~> 1.2.1"}
     ]
   end
 
