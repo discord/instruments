@@ -48,6 +48,7 @@ defmodule Instruments.Mixfile do
 
   defp deps do
     [
+      {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:recon, "~> 2.3.1"},
       {:statix, "~> 1.2.1"}

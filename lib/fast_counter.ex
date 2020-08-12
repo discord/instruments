@@ -38,11 +38,25 @@ defmodule Instruments.FastCounter do
   @spec increment(iodata) :: :ok
   @spec increment(iodata, integer) :: :ok
   @spec increment(iodata, integer, Statix.options()) :: :ok
-  def increment(name, amount \\ 1, options \\ []) do
+  def increment(name, amount \\ 1, options \\ [])
+
+  def increment(name, amount, []) do
+    table_key = {name, []}
+    :ets.update_counter(current_table(), table_key, amount, {table_key, 0})
+    :ok
+  end
+
+  def increment(name, amount, options) do
     table_key =
       case Keyword.get(options, :tags) do
+        [] ->
+          {name, options}
+
+        [_] ->
+          {name, options}
+
         tags when is_list(tags) ->
-          {name, Keyword.merge(options, tags: Enum.sort(tags))}
+          {name, Keyword.replace!(options, :tags, Enum.sort(tags))}
 
         _ ->
           {name, options}

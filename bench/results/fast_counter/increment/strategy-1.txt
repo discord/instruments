@@ -1,0 +1,52 @@
+v1 Fast Counter Strategy
+
+Original release Fast Counter Strategy.  Creates a semi-stable key by sorting tags and merging them back into the
+options.
+
+Output of Benchmark
+
+Operating System: macOS
+CPU Information: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Number of Available Cores: 16
+Available memory: 64 GB
+Elixir 1.7.4
+Erlang 21.3.8.10
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 0 ns
+parallel: 1
+inputs: 1. No Options, 2. No Tags, 3. Empty Tags, 4. One Tag, 5. Five Tags, 6. Ten Tags
+Estimated total run time: 42 s
+
+Benchmarking increment with input 1. No Options...
+Benchmarking increment with input 2. No Tags...
+Benchmarking increment with input 3. Empty Tags...
+Benchmarking increment with input 4. One Tag...
+Benchmarking increment with input 5. Five Tags...
+Benchmarking increment with input 6. Ten Tags...
+
+##### With input 1. No Options #####
+Name                ips        average  deviation         median         99th %
+increment       41.87 K       23.89 μs    ±40.66%          22 μs          70 μs
+
+##### With input 2. No Tags #####
+Name                ips        average  deviation         median         99th %
+increment       34.17 K       29.26 μs    ±42.41%          25 μs          87 μs
+
+##### With input 3. Empty Tags #####
+Name                ips        average  deviation         median         99th %
+increment       19.19 K       52.12 μs    ±38.40%          45 μs         140 μs
+
+##### With input 4. One Tag #####
+Name                ips        average  deviation         median         99th %
+increment       17.84 K       56.05 μs    ±38.08%       48.00 μs         150 μs
+
+##### With input 5. Five Tags #####
+Name                ips        average  deviation         median         99th %
+increment       11.15 K       89.72 μs    ±34.33%       78.00 μs      223.00 μs
+
+##### With input 6. Ten Tags #####
+Name                ips        average  deviation         median         99th %
+increment        6.58 K      151.97 μs    ±30.37%         134 μs         353 μs
