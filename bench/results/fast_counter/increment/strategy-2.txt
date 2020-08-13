@@ -65,7 +65,6 @@ Compared to v1 Average: -21.08 μs ✅
 Compared to v1 Median : -16.02 μs ✅
 Compared to v1 99th % : -53.02 μs ✅
 
-
 ##### With input 5. Five Tags #####
 Name                ips        average  deviation         median         99th %
 increment       12.06 K       82.89 μs    ±35.25%       71.98 μs      204.98 μs

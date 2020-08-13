@@ -1,0 +1,81 @@
+v3 Fast Counter Strategy
+
+Same strategy as v2 but code was changed to extract the table_key building into an inline function
+
+Output of Benchmark
+
+Operating System: macOS
+CPU Information: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Number of Available Cores: 16
+Available memory: 64 GB
+Elixir 1.7.4
+Erlang 21.3.8.10
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 0 ns
+parallel: 1
+inputs: 1. No Options, 2. No Tags, 3. Empty Tags, 4. One Tag, 5. Five Tags, 6. Ten Tags
+Estimated total run time: 42 s
+
+Benchmarking increment with input 1. No Options...
+Benchmarking increment with input 2. No Tags...
+Benchmarking increment with input 3. Empty Tags...
+Benchmarking increment with input 4. One Tag...
+Benchmarking increment with input 5. Five Tags...
+Benchmarking increment with input 6. Ten Tags...
+
+##### With input 1. No Options #####
+Name                ips        average  deviation         median         99th %
+increment       47.05 K       21.25 μs    ±37.14%       19.98 μs       60.98 μs
+
+Compared to v2 IPS    : +0.55K    ✅
+Compared to v2 Average: -0.26 μs  ❌
+Compared to v2 Median : +1.00 μs  ✅
+Compared to v2 99th % : -2.00 μs  ✅
+
+##### With input 2. No Tags #####
+Name                ips        average  deviation         median         99th %
+increment       36.19 K       27.63 μs    ±31.73%       25.98 μs       74.98 μs
+
+Compared to v2 IPS    : +1.23K    ✅
+Compared to v2 Average: -1.05 μs  ✅
+Compared to v2 Median : +/- 0 μs  ✅
+Compared to v2 99th % : -5.00 μs  ✅
+
+##### With input 3. Empty Tags #####
+Name                ips        average  deviation         median         99th %
+increment       32.72 K       30.57 μs    ±29.42%       28.98 μs       78.98 μs
+
+Compared to v2 IPS    : +2.10K    ✅
+Compared to v2 Average: -2.09 μs  ✅
+Compared to v2 Median : +/- 0 μs  ✅
+Compared to v2 99th % : -13.00 μs ✅
+
+##### With input 4. One Tag #####
+Name                ips        average  deviation         median         99th %
+increment       29.47 K       33.93 μs    ±31.08%       30.98 μs       87.98 μs
+
+Compared to v2 IPS    : +0.87K    ✅
+Compared to v2 Average: -1.04 μs  ✅
+Compared to v2 Median : -1.00 μs  ✅
+Compared to v2 99th % : -9.00 μs  ✅
+
+##### With input 5. Five Tags #####
+Name                ips        average  deviation         median         99th %
+increment       13.81 K       72.42 μs    ±22.17%       68.98 μs      157.98 μs
+
+Compared to v2 IPS    : +1.75K    ✅
+Compared to v2 Average: -10.47 μs ✅
+Compared to v2 Median : -3.00 μs  ✅
+Compared to v2 99th % : -47.00 μs ✅
+
+##### With input 6. Ten Tags #####
+Name                ips        average  deviation         median         99th %
+increment        7.68 K      130.14 μs    ±25.45%      118.98 μs      287.98 μs
+
+Compared to v2 IPS    : +0.27K    ✅
+Compared to v2 Average: -4.88 μs  ✅
+Compared to v2 Median : +/- 0 μs  ✅
+Compared to v2 99th % : -32.00 μs ✅

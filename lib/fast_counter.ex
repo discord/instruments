@@ -13,6 +13,7 @@ defmodule Instruments.FastCounter do
                                   :fast_counter_report_interval,
                                   10_000
                                 )
+  @compile {:inline, get_table_key: 2}
 
   use GenServer
 
@@ -38,30 +39,8 @@ defmodule Instruments.FastCounter do
   @spec increment(iodata) :: :ok
   @spec increment(iodata, integer) :: :ok
   @spec increment(iodata, integer, Statix.options()) :: :ok
-  def increment(name, amount \\ 1, options \\ [])
-
-  def increment(name, amount, []) do
-    table_key = {name, []}
-    :ets.update_counter(current_table(), table_key, amount, {table_key, 0})
-    :ok
-  end
-
-  def increment(name, amount, options) do
-    table_key =
-      case Keyword.get(options, :tags) do
-        [] ->
-          {name, options}
-
-        [_] ->
-          {name, options}
-
-        tags when is_list(tags) ->
-          {name, Keyword.replace!(options, :tags, Enum.sort(tags))}
-
-        _ ->
-          {name, options}
-      end
-
+  def increment(name, amount \\ 1, options \\ []) do
+    table_key = get_table_key(name, options)
     :ets.update_counter(current_table(), table_key, amount, {table_key, 0})
     :ok
   end
@@ -102,6 +81,26 @@ defmodule Instruments.FastCounter do
   end
 
   ## Private
+
+  defp get_table_key(name, []) do
+    {name, []}
+  end
+
+  defp get_table_key(name, options) do
+    case Keyword.get(options, :tags) do
+      [] ->
+        {name, options}
+
+      [_] ->
+        {name, options}
+
+      tags when is_list(tags) ->
+        {name, Keyword.replace!(options, :tags, Enum.sort(tags))}
+
+      _ ->
+        {name, options}
+    end
+  end
 
   defp report_stat({_key, 0}, _),
     do: :ok
