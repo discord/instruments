@@ -1,0 +1,106 @@
+Values presented are thousands of iterations per second, higher is better.
+
+For each scenario scores are calculated, scores are calculate with the following formula.
+
+score = round(((total - worst) / (best - worst)) * 100)
+
+##### With input 1. No Options #####
+                                                       | Run 1 | Run 2 | Run 3 | Average | Total | Score |
+                                                       |-------|-------|-------|---------|-------|-------|
+Keyword.get/2 + Keyword.merge/2                        |  177  |  177  |  166  |   173   |  520  |  100  |
+Keyword.get/2 + Keyword.replace!/3                     |  158  |  166  |  160  |   161   |  484  |   73  |
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |  155  |  167  |  158  |   160   |  480  |   70  |
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |  150  |  160  |  161  |   157   |  471  |   64  |
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |  127  |  129  |  130  |   129   |  386  |    1  |
+Keyword.pop/2 + Keyword.put/3                          |  119  |  135  |  131  |   128   |  385  |    0  |
+
+##### With input 2. No Tags #####
+
+                                                       | Run 1 | Run 2 | Run 3 | Average | Total | Score |
+                                                       |-------|-------|-------|---------|-------|-------|
+Keyword.get/2 + Keyword.merge/2                        |  175  |  174  |  156  |   168   |  505  |  100  |
+Keyword.get/2 + Keyword.replace!/3                     |  151  |  166  |  153  |   156   |  470  |   72  |
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |  154  |  139  |  154  |   149   |  447  |   54  |
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |  145  |  135  |  157  |   146   |  437  |   46  |
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |  125  |  128  |  128  |   127   |  381  |    1  |
+Keyword.pop/2 + Keyword.put/3                          |  119  |  132  |  129  |   127   |  380  |    0  |
+
+##### With input 3. Empty Tags #####
+
+                                                       | Run 1 | Run 2 | Run 3 | Average | Total | Score |
+                                                       |-------|-------|-------|---------|-------|-------|
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |  147  |  150  |  150  |   149   |  447  |  100  |
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |  136  |  147  |  153  |   145   |  436  |   97  |
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |   73  |   71  |   77  |    74   |  221  |   30  |
+Keyword.get/2 + Keyword.replace!/3                     |   58  |   65  |   62  |    62   |  185  |   18  |
+Keyword.pop/2 + Keyword.put/3                          |   50  |   61  |   54  |    55   |  165  |   12  |
+Keyword.get/2 + Keyword.merge/2                        |   44  |   42  |   40  |    42   |  126  |    0  |
+
+
+
+##### With input 4. One Tag #####
+
+                                                       | Run 1 | Run 2 | Run 3 | Average | Total | Score |
+                                                       |-------|-------|-------|---------|-------|-------|
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |  144  |  152  |  153  |   150   |  449  |  100  |
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |  143  |  154  |  150  |   149   |  447  |   99  |
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |   73  |   74  |   75  |    74   |  222  |   30  |
+Keyword.get/2 + Keyword.replace!/3                     |   58  |   65  |   59  |    61   |  182  |   17  |
+Keyword.pop/2 + Keyword.put/3                          |   50  |   57  |   51  |    53   |  158  |   10  |
+Keyword.get/2 + Keyword.merge/2                        |   43  |   42  |   41  |    42   |  126  |    0  |
+
+##### With input 5. Five Tags #####
+
+                                                       | Run 1 | Run 2 | Run 3 | Average | Total | Score |
+                                                       |-------|-------|-------|---------|-------|-------|
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |   26  |   30  |   29  |    28   |   85  |  100  |
+Keyword.get/2 + Keyword.replace!/3                     |   27  |   29  |   28  |    28   |   84  |   95  |
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |   26  |   27  |   27  |    27   |   80  |   76  |
+Keyword.pop/2 + Keyword.put/3                          |   23  |   27  |   26  |    25   |   76  |   57  |
+Keyword.get/2 + Keyword.merge/2                        |   24  |   23  |   22  |    23   |   69  |   24  |
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |   21  |   22  |   21  |    21   |   64  |    0  |
+
+##### With input 6. Ten Tags #####
+
+                                                       | Run 1 | Run 2 | Run 3 | Average | Total | Score |
+                                                       |-------|-------|-------|---------|-------|-------|
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |   13  |   13  |   13  |    13   |   39  |  100  |
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |   11  |   13  |   13  |    12   |   37  |   71  |
+Keyword.get/2 + Keyword.replace!/3                     |   11  |   12  |   13  |    12   |   36  |   57  |
+Keyword.get/2 + Keyword.merge/2                        |   12  |   11  |   11  |    11   |   34  |   29  |
+Keyword.pop/2 + Keyword.put/3                          |   11  |   12  |   11  |    11   |   34  |   29  |
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |   11  |   11  |   10  |    11   |   32  |    0  |
+
+#### Overall Score Analysis ####
+
+                                                       | Case 1 | Case 2 | Case 3 | Case 4 | Case 5 | Case 6 | Total | Average |
+                                                       |--------|--------|--------|--------|--------|--------|-------|---------|
+Keyword.get/2 + Keyword.replace!/3 with Special Casing |    64  |    46  |    97  |   100  |   100  |    71  |  478  |    80   |
+Keyword.get/2 + Keyword.replace!/3                     |    73  |    72  |    18  |    17  |    95  |    57  |  332  |    55   |
+Keyword.get/2 + Keyword.merge/2 with Special Casing    |    70  |    54  |   100  |    99  |     0  |     0  |  323  |    54   |
+Keyword.get/2 + Keyword.merge/2                        |   100  |   100  |     0  |     0  |    24  |    29  |  253  |    42   |
+Keyword.pop/2 + Keyword.put/3 with Special Casing      |     1  |     1  |    30  |    30  |    76  |   100  |  238  |    39   |
+Keyword.pop/2 + Keyword.put/3                          |     0  |     0  |    12  |    10  |    57  |    29  |  108  |    18   |
+
+
+#### Results ####
+
+Keyword.get/2 + Keyword.replace!/3 with Special Casing on average is the best performing algorithm for tag handling
+
+Performance Report compared to best
+
+       |  Run 1   |  Run 2  |  Run 3  | Average |
+       |----------|---------|---------|---------|
+Case 1 |  +0.90μs | +0.59μs | +0.19μs | +0.56μs |
+Case 2 |  +1.22μs | +1.63μs | -0.01μs | +0.95μs |
+Case 3 |  +0.55μs | +0.17μs | -0.14μs | +0.19μs |
+Case 4 |  -0.04μs | +0.07μs | -0.11μs | -0.08μs |
+Case 5 |  -1.20μs | -1.49μs | -1.43μs | -1.37μs |
+Case 6 | +10.04μs | -0.41μs | +1.43μs | +3.69μs |
+
+Worst underperformance is the outlier Run 1 / Case 6 where this strategy underperformed by 10.04μs.
+
+Overall the strategy is never worse than +10.04μs than the best strategy and outperforms all other strategies by up to -1.49μs in some scenarios.
+
+With the outlier removed, the performance envelope for this strategy is within a tolerance of +1.63μs from being the best strategy in all cases.
+

@@ -1,7 +1,7 @@
 defmodule Instruments.Mixfile do
   use Mix.Project
 
-  @version "1.1.3"
+  @version "2.0.0"
   @github_url "https://github.com/discord/instruments"
 
   def project do
@@ -9,7 +9,7 @@ defmodule Instruments.Mixfile do
       app: :instruments,
       name: "Instruments",
       version: @version,
-      elixir: "~> 1.3",
+      elixir: "~> 1.5",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       elixirc_paths: compile_paths(Mix.env()),
@@ -48,6 +48,7 @@ defmodule Instruments.Mixfile do
 
   defp deps do
     [
+      {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:recon, "~> 2.3.1"},
       {:statix, "~> 1.2.1"}

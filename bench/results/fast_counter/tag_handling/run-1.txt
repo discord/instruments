@@ -1,0 +1,153 @@
+Operating System: macOS
+CPU Information: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Number of Available Cores: 16
+Available memory: 64 GB
+Elixir 1.7.4
+Erlang 21.3.8.10
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 0 ns
+parallel: 1
+inputs: 1. No Options, 2. No Tags, 3. Empty Tags, 4. One Tag, 5. Five Tags, 6. Ten Tags
+Estimated total run time: 4.20 min
+
+Benchmarking Keyword.get/2 + Keyword.merge/2 with input 1. No Options...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with input 2. No Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with input 3. Empty Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with input 4. One Tag...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with input 5. Five Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with input 6. Ten Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with Special Casing with input 1. No Options...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with Special Casing with input 2. No Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with Special Casing with input 3. Empty Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with Special Casing with input 4. One Tag...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with Special Casing with input 5. Five Tags...
+Benchmarking Keyword.get/2 + Keyword.merge/2 with Special Casing with input 6. Ten Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with input 1. No Options...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with input 2. No Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with input 3. Empty Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with input 4. One Tag...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with input 5. Five Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with input 6. Ten Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with Special Casing with input 1. No Options...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with Special Casing with input 2. No Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with Special Casing with input 3. Empty Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with Special Casing with input 4. One Tag...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with Special Casing with input 5. Five Tags...
+Benchmarking Keyword.get/2 + Keyword.replace!/3 with Special Casing with input 6. Ten Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with input 1. No Options...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with input 2. No Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with input 3. Empty Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with input 4. One Tag...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with input 5. Five Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with input 6. Ten Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with Special Casing with input 1. No Options...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with Special Casing with input 2. No Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with Special Casing with input 3. Empty Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with Special Casing with input 4. One Tag...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with Special Casing with input 5. Five Tags...
+Benchmarking Keyword.pop/2 + Keyword.put/3 with Special Casing with input 6. Ten Tags...
+
+##### With input 1. No Options #####
+Name                                                             ips        average  deviation         median         99th %
+Keyword.get/2 + Keyword.merge/2                             173.58 K        5.76 μs   ±217.77%           5 μs          26 μs
+Keyword.get/2 + Keyword.replace!/3                          158.46 K        6.31 μs   ±144.04%           6 μs          27 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing         155.24 K        6.44 μs   ±126.07%           6 μs          29 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      150.05 K        6.66 μs   ±134.41%           6 μs          28 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing           127.09 K        7.87 μs   ±115.74%           7 μs          30 μs
+Keyword.pop/2 + Keyword.put/3                               119.39 K        8.38 μs   ±121.42%           8 μs          30 μs
+
+Comparison:
+Keyword.get/2 + Keyword.merge/2                             173.58 K
+Keyword.get/2 + Keyword.replace!/3                          158.46 K - 1.10x slower +0.55 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing         155.24 K - 1.12x slower +0.68 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      150.05 K - 1.16x slower +0.90 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing           127.09 K - 1.37x slower +2.11 μs
+Keyword.pop/2 + Keyword.put/3                               119.39 K - 1.45x slower +2.61 μs
+
+##### With input 2. No Tags #####
+Name                                                             ips        average  deviation         median         99th %
+Keyword.get/2 + Keyword.merge/2                             175.59 K        5.70 μs   ±235.28%           5 μs          26 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing         154.30 K        6.48 μs   ±138.74%           6 μs          29 μs
+Keyword.get/2 + Keyword.replace!/3                          151.31 K        6.61 μs   ±136.86%           6 μs          28 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      144.60 K        6.92 μs   ±164.46%           7 μs          17 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing           125.17 K        7.99 μs   ±130.25%           7 μs          31 μs
+Keyword.pop/2 + Keyword.put/3                               119.29 K        8.38 μs   ±124.92%           7 μs          34 μs
+
+Comparison:
+Keyword.get/2 + Keyword.merge/2                             175.59 K
+Keyword.get/2 + Keyword.merge/2 with Special Casing         154.30 K - 1.14x slower +0.79 μs
+Keyword.get/2 + Keyword.replace!/3                          151.31 K - 1.16x slower +0.91 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      144.60 K - 1.21x slower +1.22 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing           125.17 K - 1.40x slower +2.29 μs
+Keyword.pop/2 + Keyword.put/3                               119.29 K - 1.47x slower +2.69 μs
+
+##### With input 3. Empty Tags #####
+Name                                                             ips        average  deviation         median         99th %
+Keyword.get/2 + Keyword.merge/2 with Special Casing         147.21 K        6.79 μs   ±143.28%           6 μs          30 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      136.14 K        7.35 μs   ±121.45%           7 μs          21 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing            72.95 K       13.71 μs    ±48.37%          12 μs          44 μs
+Keyword.get/2 + Keyword.replace!/3                           58.27 K       17.16 μs    ±39.63%          16 μs          38 μs
+Keyword.pop/2 + Keyword.put/3                                50.46 K       19.82 μs    ±51.60%          17 μs          62 μs
+Keyword.get/2 + Keyword.merge/2                              43.69 K       22.89 μs    ±41.07%          21 μs          65 μs
+
+Comparison:
+Keyword.get/2 + Keyword.merge/2 with Special Casing         147.21 K
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      136.14 K - 1.08x slower +0.55 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing            72.95 K - 2.02x slower +6.92 μs
+Keyword.get/2 + Keyword.replace!/3                           58.27 K - 2.53x slower +10.37 μs
+Keyword.pop/2 + Keyword.put/3                                50.46 K - 2.92x slower +13.02 μs
+Keyword.get/2 + Keyword.merge/2                              43.69 K - 3.37x slower +16.09 μs
+
+##### With input 4. One Tag #####
+Name                                                             ips        average  deviation         median         99th %
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      143.50 K        6.97 μs   ±129.37%           6 μs          30 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing         142.58 K        7.01 μs   ±129.65%           6 μs          29 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing            72.57 K       13.78 μs    ±50.94%          12 μs          46 μs
+Keyword.get/2 + Keyword.replace!/3                           58.44 K       17.11 μs    ±43.30%          16 μs          37 μs
+Keyword.pop/2 + Keyword.put/3                                49.73 K       20.11 μs    ±49.34%          17 μs          62 μs
+Keyword.get/2 + Keyword.merge/2                              43.23 K       23.13 μs    ±41.80%          21 μs          65 μs
+
+Comparison:
+Keyword.get/2 + Keyword.replace!/3 with Special Casing      143.50 K
+Keyword.get/2 + Keyword.merge/2 with Special Casing         142.58 K - 1.01x slower +0.0446 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing            72.57 K - 1.98x slower +6.81 μs
+Keyword.get/2 + Keyword.replace!/3                           58.44 K - 2.46x slower +10.14 μs
+Keyword.pop/2 + Keyword.put/3                                49.73 K - 2.89x slower +13.14 μs
+Keyword.get/2 + Keyword.merge/2                              43.23 K - 3.32x slower +16.16 μs
+
+##### With input 5. Five Tags #####
+Name                                                             ips        average  deviation         median         99th %
+Keyword.get/2 + Keyword.replace!/3                           27.19 K       36.78 μs    ±39.29%          32 μs         101 μs
+Keyword.pop/2 + Keyword.put/3 with Special Casing            26.33 K       37.98 μs    ±37.51%          34 μs         105 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing       25.99 K       38.48 μs    ±34.21%          36 μs          98 μs
+Keyword.get/2 + Keyword.merge/2                              23.85 K       41.93 μs    ±30.92%          38 μs         105 μs
+Keyword.pop/2 + Keyword.put/3                                23.15 K       43.19 μs    ±26.28%          40 μs          92 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing          21.33 K       46.88 μs    ±36.12%          42 μs         121 μs
+
+Comparison:
+Keyword.get/2 + Keyword.replace!/3                           27.19 K
+Keyword.pop/2 + Keyword.put/3 with Special Casing            26.33 K - 1.03x slower +1.20 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing       25.99 K - 1.05x slower +1.70 μs
+Keyword.get/2 + Keyword.merge/2                              23.85 K - 1.14x slower +5.15 μs
+Keyword.pop/2 + Keyword.put/3                                23.15 K - 1.17x slower +6.41 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing          21.33 K - 1.27x slower +10.10 μs
+
+##### With input 6. Ten Tags #####
+Name                                                             ips        average  deviation         median         99th %
+Keyword.pop/2 + Keyword.put/3 with Special Casing            12.84 K       77.90 μs    ±28.77%          71 μs         185 μs
+Keyword.get/2 + Keyword.merge/2                              11.58 K       86.37 μs    ±30.03%          79 μs         208 μs
+Keyword.get/2 + Keyword.replace!/3                           11.37 K       87.94 μs    ±23.55%          84 μs         177 μs
+Keyword.pop/2 + Keyword.put/3                                11.34 K       88.20 μs    ±32.71%          78 μs         209 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing       11.19 K       89.35 μs    ±24.93%          84 μs         184 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing          10.93 K       91.46 μs    ±32.56%          81 μs         219 μs
+
+Comparison:
+Keyword.pop/2 + Keyword.put/3 with Special Casing            12.84 K
+Keyword.get/2 + Keyword.merge/2                              11.58 K - 1.11x slower +8.47 μs
+Keyword.get/2 + Keyword.replace!/3                           11.37 K - 1.13x slower +10.04 μs
+Keyword.pop/2 + Keyword.put/3                                11.34 K - 1.13x slower +10.29 μs
+Keyword.get/2 + Keyword.replace!/3 with Special Casing       11.19 K - 1.15x slower +11.44 μs
+Keyword.get/2 + Keyword.merge/2 with Special Casing          10.93 K - 1.17x slower +13.55 μs
