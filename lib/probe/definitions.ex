@@ -109,8 +109,9 @@ defmodule Instruments.Probe.Definitions do
   defp unique_names(probe_names, options) do
     case Keyword.get(options, :tags) do
       tags when is_list(tags) ->
-        for probe_name <- probe_names, tag <- tags do
-          "#{probe_name}.tag:#{tag}"
+        tag_string = inspect(Enum.sort(tags))
+        for probe_name <- probe_names do
+          "#{probe_name}.tags:#{tag_string}"
         end
 
       nil ->
