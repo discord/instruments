@@ -1,5 +1,10 @@
 # Instruments: Simple, powerful and fast metrics for Statsd and DataDog
 
+[![CI](https://github.com/discord/instruments/workflows/CI/badge.svg)](https://github.com/discord/instruments/actions)
+[![Hex.pm Version](http://img.shields.io/hexpm/v/instruments.svg?style=flat)](https://hex.pm/packages/instruments)
+[![Hex.pm License](http://img.shields.io/hexpm/l/instruments.svg?style=flat)](https://hex.pm/packages/instruments)
+[![HexDocs](https://img.shields.io/badge/HexDocs-Yes-blue)](https://hexdocs.pm/instruments)
+
 You're blind without metrics. Metrics should also be easy to add to you application
 and have little performance impact. This module allows you to define metrics
 with ease and see inside your application.
