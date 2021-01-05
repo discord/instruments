@@ -5,7 +5,7 @@ defmodule Instruments.ProbeTest do
   import MetricsAssertions
 
   setup do
-    {:ok, _fake_statsd} = FakeStatsd.start_link(self())
+    {:ok, _fake_statsd} = start_supervised({FakeStatsd, self()})
 
     :ok
   end
