@@ -5,9 +5,9 @@ defmodule Instruments.Probe do
   Modules that define probes are expected to implement all of the functions in
   this behaviour.
 
-  A probe is created via the call to `Instruments.Probe.probe_init/3`, and is
+  A probe is created via the call to `c:Instruments.Probe.probe_init/3`, and is
   then called every `sample_interval` milliseconds via the
-  `Instruments.Probe.probe_sample/1` function. The probe can then update its
+  `c:Instruments.Probe.probe_sample/1` function. The probe can then update its
   internal state and do any processing it requires.
 
   Every `report_interval` milliseconds, the probe is expected to emit its metric
