@@ -17,7 +17,7 @@ defmodule MetricsAssertions do
     assert_receive {:metric_reported, {^metric_type, ^metric_name, actual_value, _}}
 
     cond do
-      Range.range?(expected_metric_value) ->
+      range?(expected_metric_value) ->
         do_assert_range(expected_metric_value, actual_value)
 
       true ->
@@ -39,7 +39,7 @@ defmodule MetricsAssertions do
     do_assert_options(metric_type, options, actual_options)
 
     cond do
-      Range.range?(expected_metric_value) ->
+      range?(expected_metric_value) ->
         do_assert_range(expected_metric_value, actual_metric_value)
 
       true ->
@@ -61,5 +61,13 @@ defmodule MetricsAssertions do
       assert {expected_key, expected_value} ==
                {expected_key, Keyword.get(actual_options, expected_key)}
     end
+  end
+
+  defp range?(_.._) do
+    true
+  end
+
+  defp range?(_) do
+    false
   end
 end

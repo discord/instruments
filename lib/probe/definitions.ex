@@ -83,8 +83,6 @@ defmodule Instruments.Probe.Definitions do
     GenServer.call(__MODULE__, {:define, unique_names, defn_fn})
   end
 
-  @spec handle_call({:define, [String.t()], (() -> any)}, any, any) ::
-          {:ok, [String.t()]} | {:error, {:probe_names_taken, [String.t()]}}
   def handle_call({:define, probe_names, transaction}, _from, _) do
     response =
       case used_probe_names(probe_names) do
