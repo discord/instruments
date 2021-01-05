@@ -25,7 +25,7 @@ defmodule Instruments.Probe do
           | {:report_interval, pos_integer}
           | {:sample_interval, pos_integer}
           | {:function, (() -> {:ok, state})}
-          | {:mfa, mfa}
+          | {:mfa, {module(), atom(), [term()]}}
           | {:module, module}
           | {:keys, [atom]}
         ]

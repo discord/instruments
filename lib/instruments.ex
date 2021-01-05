@@ -166,9 +166,8 @@ defmodule Instruments do
   @doc """
   Sends an event to DataDog
 
-  This function is useful if you want to record one-off events like deploys or metrics values changing.
+  This macro is useful if you want to record one-off events like deploys or metrics values changing.
   """
-  @spec send_event(iodata, iodata, Statix.options()) :: :ok
   defmacro send_event(title_ast, text, opts \\ []) do
     title_iodata = MacroHelpers.to_iolist(title_ast, __CALLER__)
 
@@ -229,7 +228,7 @@ defmodule Instruments do
     1. `erlang.statistics.run_queue`: A gauge reporting the VM's run queue. This number should be 0 or very low. A high run queue indicates your system is overloaded.
     1. `erlang.scheduler_utilization`: A gauge that reports the actual utilization of every scheduler in the system. See `Instruments.Probes.Schedulers` for more information
   """
-  @spec register_vm_metrics(Number.t()) :: :ok
+  @spec register_vm_metrics(pos_integer()) :: :ok
   def register_vm_metrics(report_interval \\ 10000) do
     # VM memory.
     # processes = used by Erlang processes, their stacks and heaps.
