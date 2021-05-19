@@ -57,7 +57,7 @@ defmodule Instruments.Mixfile do
   end
 
   defp description do
-    "A small, fast, and unobtrusive metrics library"
+    "A small, fast, and unobtrusive metrics library."
   end
 
   defp package do
