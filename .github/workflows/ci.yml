@@ -8,24 +8,26 @@ on:
 
 jobs:
   build:
-
     name: Build and test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
+      # This depends on listening on a UDP socket on a fixed port so only 1 at a time.
+      max-parallel: 1
       matrix:
+        elixir-version: ['1.6.6', '1.7.4', '1.10.4']
+        otp-version: ['20.3', '21.3']
+        exclude:
+          - elixir-version: 1.10.4
+            otp-version: 20.3
         include:
-          - elixir-version: 1.6.6
-            otp-version: 20.3
-          - elixir-version: 1.6.6
-            otp-version: 21.3
-          - elixir-version: 1.7.4
-            otp-version: 20.3
-          - elixir-version: 1.7.4
+          - elixir-version: 1.11.4
+            otp-version: 23.3
+          - elixir-version: 1.11.4
             otp-version: 21.3
     steps:
     - uses: actions/checkout@v2
     - name: Set up Elixir
-      uses: actions/setup-elixir@v1
+      uses: erlef/setup-beam@v1
       with:
         elixir-version: ${{ matrix.elixir-version }}
         otp-version: ${{ matrix.otp-version }}
