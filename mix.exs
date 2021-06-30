@@ -1,7 +1,7 @@
 defmodule Instruments.Mixfile do
   use Mix.Project
 
-  @version "2.1.2"
+  @version "2.1.3"
   @github_url "https://github.com/discord/instruments"
 
   def project do
@@ -50,7 +50,7 @@ defmodule Instruments.Mixfile do
     [
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:recon, "~> 2.5"},
+      {:recon, github: "ferd/recon", ref: "508148d633ff0de7262d953547a984edec0722bb"},
       {:statix, "~> 1.2.1"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false}
     ]
