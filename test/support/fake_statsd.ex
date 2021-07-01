@@ -12,7 +12,7 @@ defmodule FakeStatsd do
   end
 
   def init([test_process]) do
-    {:ok, sock} = :gen_udp.open(Instruments.statsd_port(), [:binary, active: true])
+    {:ok, sock} = :gen_udp.open(Instruments.statsd_port(), [:binary, active: true, reuseaddr: true])
     {:ok, {test_process, sock}}
   end
 
