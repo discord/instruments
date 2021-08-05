@@ -1,7 +1,7 @@
 defmodule Instruments.Mixfile do
   use Mix.Project
 
-  @version "2.1.3"
+  @version "2.1.4"
   @github_url "https://github.com/discord/instruments"
 
   def project do

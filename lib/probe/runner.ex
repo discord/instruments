@@ -67,7 +67,12 @@ defmodule Instruments.Probe.Runner do
 
   @spec start_link(String.t(), Probe.probe_type(), Probe.probe_options(), module) :: {:ok, pid}
   def start_link(name, type, options, probe_module) do
-    GenServer.start_link(__MODULE__, {name, type, options, probe_module})
+    start_link({name, type, options, probe_module})
+  end
+
+  @spec start_link({String.t(), Probe.probe_type(), Probe.probe_options(), module}) :: {:ok, pid}
+  def start_link(args) do
+    GenServer.start_link(__MODULE__, args)
   end
 
   def flush(probe_pid) do
