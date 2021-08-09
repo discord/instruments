@@ -9,18 +9,15 @@ defmodule Instruments.Application do
   }
 
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
-
     reporter = Application.get_env(:instruments, :reporter_module, Instruments.Statix)
     reporter.connect()
 
     children = [
-      worker(FastCounter, []),
-      worker(Probe.Definitions, []),
-      worker(Probe.Supervisor, [])
+      FastCounter,
+      Probe.Definitions,
+      Probe.Supervisor,
     ]
 
-    opts = [strategy: :one_for_one, name: Instruments.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: Instruments.Supervisor)
   end
 end

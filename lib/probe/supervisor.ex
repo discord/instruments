@@ -1,20 +1,16 @@
 defmodule Instruments.Probe.Supervisor do
   @moduledoc false
-  use Supervisor
+  use DynamicSupervisor
 
-  def start_link do
-    Supervisor.start_link(__MODULE__, [], name: __MODULE__)
+  def start_link(_ \\ []) do
+    DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init([]) do
-    children = [
-      worker(Instruments.Probe.Runner, [])
-    ]
-
-    supervise(children, strategy: :simple_one_for_one)
+    DynamicSupervisor.init(strategy: :one_for_one)
   end
 
   def start_probe(name, type, options, probe_module) do
-    Supervisor.start_child(__MODULE__, [name, type, options, probe_module])
+    DynamicSupervisor.start_child(__MODULE__, {Instruments.Probe.Runner, {name, type, options, probe_module}})
   end
 end

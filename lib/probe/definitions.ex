@@ -11,7 +11,7 @@ defmodule Instruments.Probe.Definitions do
   @probe_prefix Application.get_env(:instruments, :probe_prefix)
   @table_name :probe_definitions
 
-  def start_link(), do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  def start_link(_ \\ []), do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
 
   def init([]) do
     table_name = @table_name
