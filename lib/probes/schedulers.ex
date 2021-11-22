@@ -17,7 +17,7 @@ defmodule Instruments.Probes.Schedulers do
   initialization:
 
       alias Instruments
-      Probe.define!("erlang.scheduler_utilization", :gauge, Probes.Schedulers, keys: ~w(weighted total))
+      Probe.define!("erlang.scheduler_utilization", :gauge, module: Probes.Schedules, keys: ~w(weighted total))~
 
   The probe will now report two metrics, `erlang.scheduler_utilization.total` and `erlang.scheduler_utilization.total`.
   """
