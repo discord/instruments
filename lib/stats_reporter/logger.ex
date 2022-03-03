@@ -36,7 +36,7 @@ defmodule Instruments.StatsReporter.Logger do
 
   @doc false
   def measure(key, _options \\ [], fun) do
-    {time_in_us, result} = fun.()
+    {time_in_us, result} = :timer.tc(fun)
     Logger.info("#{key} took #{time_in_us / 1000}ms")
     result
   end
