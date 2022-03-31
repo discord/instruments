@@ -142,6 +142,9 @@ defmodule Instruments.Probe.Runner do
 
       nil ->
         Logger.info("Not Sending #{state.name} due to nil return")
+
+      invalid ->
+        Logger.warning("Probe #{state.name} has returned an invalid value: #{inspect(invalid)}")
     end
   end
 
