@@ -5,16 +5,16 @@ defmodule MetricsAssertions do
   use ExUnit.Case
 
   def assert_metric_reported(metric_type, metric_name) do
-    assert_receive {:metric_reported, {^metric_type, ^metric_name, _, _}}
+    assert_receive {:metric_reported, {^metric_type, ^metric_name, _, _}}, 5000
   end
 
   def assert_metric_reported(metric_type, metric_name, metric_value)
       when is_number(metric_value) do
-    assert_receive {:metric_reported, {^metric_type, ^metric_name, ^metric_value, _}}
+    assert_receive {:metric_reported, {^metric_type, ^metric_name, ^metric_value, _}}, 5000
   end
 
   def assert_metric_reported(metric_type, metric_name, expected_metric_value) do
-    assert_receive {:metric_reported, {^metric_type, ^metric_name, actual_value, _}}
+    assert_receive {:metric_reported, {^metric_type, ^metric_name, actual_value, _}}, 5000
 
     cond do
       range?(expected_metric_value) ->
@@ -27,14 +27,14 @@ defmodule MetricsAssertions do
 
   def assert_metric_reported(metric_type, metric_name, metric_value, options)
       when is_number(metric_value) do
-    assert_receive {:metric_reported, {^metric_type, ^metric_name, ^metric_value, actual_options}}
+    assert_receive {:metric_reported, {^metric_type, ^metric_name, ^metric_value, actual_options}}, 5000
 
     do_assert_options(metric_type, options, actual_options)
   end
 
   def assert_metric_reported(metric_type, metric_name, expected_metric_value, options) do
     assert_receive {:metric_reported,
-                    {^metric_type, ^metric_name, actual_metric_value, actual_options}}
+                    {^metric_type, ^metric_name, actual_metric_value, actual_options}}, 5000
 
     do_assert_options(metric_type, options, actual_options)
 
