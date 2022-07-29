@@ -5,6 +5,7 @@ use Mix.Config
 config :instruments,
   statsd_port: 15310,
   fast_counter_report_interval: 10,
+  fast_counter_report_jitter_range: 0..0,
   reporter_module: Instruments.Statix
 
 config :logger, compile_time_purge_level: :error, level: :error#, backends: []
