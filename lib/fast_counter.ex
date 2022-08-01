@@ -4,15 +4,22 @@ defmodule Instruments.FastCounter do
   # A Faster than normal counter.
 
   # Builds one ETS table per scheduler in the system and sends increment / decrement writes to the local
-  # scheduler. Statistics are reported per scheduler once every `fast_counter_report_interval` milliseconds.
+  # scheduler.
+  # Statistics are reported per scheduler once every `fast_counter_report_interval` milliseconds, with a
+  # random jitter in the range of `fast_counter_report_jitter_range` milliseconds.
 
   @table_prefix :instruments_counters
   @max_tables 128
-  @fast_counter_report_interval Application.get_env(
-                                  :instruments,
-                                  :fast_counter_report_interval,
-                                  10_000
-                                )
+  @report_interval_ms Application.get_env(
+                        :instruments,
+                        :fast_counter_report_interval,
+                        10_000
+                      )
+  @report_jitter_range_ms Application.get_env(
+                            :instruments,
+                            :fast_counter_report_jitter_range,
+                            -500..500
+                          )
   @compile {:inline, get_table_key: 2}
 
   use GenServer
@@ -117,7 +124,8 @@ defmodule Instruments.FastCounter do
   end
 
   defp schedule_report() do
-    Process.send_after(self(), :report, @fast_counter_report_interval)
+    wait_time = @report_interval_ms + Enum.random(@report_jitter_range_ms)
+    Process.send_after(self(), :report, wait_time)
   end
 
   defp current_table() do
