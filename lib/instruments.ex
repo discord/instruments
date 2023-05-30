@@ -266,7 +266,9 @@ defmodule Instruments do
 
     rescue
       ErlangError ->
-        Logger.warn("[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)")
+        if Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) do
+          Logger.warn("[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)")
+        end
     end
 
 
