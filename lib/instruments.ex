@@ -54,6 +54,8 @@ defmodule Instruments do
     Probes
   }
 
+  require Logger
+
   @metrics_module Application.get_env(:instruments, :reporter_module, Instruments.Statix)
   @statsd_port Application.get_env(:instruments, :statsd_port, 8125)
 
@@ -227,34 +229,48 @@ defmodule Instruments do
     1. `erlang.system.port_count`: A gauge reporting the number of ports in the VM.
     1. `erlang.statistics.run_queue`: A gauge reporting the VM's run queue. This number should be 0 or very low. A high run queue indicates your system is overloaded.
     1. `erlang.scheduler_utilization`: A gauge that reports the actual utilization of every scheduler in the system. See `Instruments.Probes.Schedulers` for more information
+
+    If some memory allocators are disabled, then the erlang.memory and recon.alloc probes will not be registered as these statistics are unavailable.
   """
   @spec register_vm_metrics(pos_integer()) :: :ok
   def register_vm_metrics(report_interval \\ 10000) do
-    # VM memory.
-    # processes = used by Erlang processes, their stacks and heaps.
-    # system = used but not directly related to any Erlang process.
-    # atom = allocated for atoms (included in system).
-    # binary = allocated for binaries (included in system).
-    # ets = allocated for ETS tables (included in system).
-    Probe.define!("erlang.memory", :gauge,
-      mfa: {:erlang, :memory, []},
-      keys: ~w(processes system atom binary ets)a,
-      report_interval: report_interval
-    )
+    try do
+      # Ensure that we are able to get memory statistics before registering
+      :erlang.memory()
 
-    # Memory actively used by the VM, allocated (should ~match OS allocation),
-    # unused (i.e. allocated - used), and usage (used / allocated).
-    alloc_keys = ~w(used allocated unused usage)a
+      # VM memory.
+      # processes = used by Erlang processes, their stacks and heaps.
+      # system = used but not directly related to any Erlang process.
+      # atom = allocated for atoms (included in system).
+      # binary = allocated for binaries (included in system).
+      # ets = allocated for ETS tables (included in system).
+      Probe.define!("erlang.memory", :gauge,
+        mfa: {:erlang, :memory, []},
+        keys: ~w(processes system atom binary ets)a,
+        report_interval: report_interval
+      )
 
-    Probe.define!("recon.alloc", :gauge,
-      function: fn ->
-        for type <- alloc_keys, into: Keyword.new() do
-          {type, :recon_alloc.memory(type)}
+      # Memory actively used by the VM, allocated (should ~match OS allocation),
+      # unused (i.e. allocated - used), and usage (used / allocated).
+      alloc_keys = ~w(used allocated unused usage)a
+
+      Probe.define!("recon.alloc", :gauge,
+        function: fn ->
+          for type <- alloc_keys, into: Keyword.new() do
+            {type, :recon_alloc.memory(type)}
+          end
+        end,
+        keys: alloc_keys,
+        report_interval: report_interval
+      )
+
+    rescue
+      ErlangError ->
+        if Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) do
+          Logger.warn("[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)")
         end
-      end,
-      keys: alloc_keys,
-      report_interval: report_interval
-    )
+    end
+
 
     # process_count = current number of processes.
     # port_count = current number of ports.
