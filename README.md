@@ -1,6 +1,6 @@
 # Instruments: Simple, powerful and fast metrics for Statsd and DataDog
 
-[![CI](https://github.com/discord/instruments/workflows/CI/badge.svg)](https://github.com/discord/instruments/actions)
+[![CI](https://github.com/discord/instruments/actions/workflows/ci.yml/badge.svg)](https://github.com/discord/instruments/actions/workflows/ci.yml)
 [![Hex.pm Version](http://img.shields.io/hexpm/v/instruments.svg?style=flat)](https://hex.pm/packages/instruments)
 [![Hex.pm License](http://img.shields.io/hexpm/l/instruments.svg?style=flat)](https://hex.pm/packages/instruments)
 [![HexDocs](https://img.shields.io/badge/HexDocs-Yes-blue)](https://hexdocs.pm/instruments)
