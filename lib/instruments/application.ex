@@ -18,6 +18,12 @@ defmodule Instruments.Application do
       Probe.Supervisor,
     ]
 
+    children = if Application.get_env(:instruments, :enable_sysmon, false) do
+      [Instruments.Sysmon.Supervisor | children]
+    else
+      children
+    end
+
     Supervisor.start_link(children, strategy: :one_for_one, name: Instruments.Supervisor)
   end
 end
