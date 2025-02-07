@@ -1,4 +1,9 @@
 defmodule Instruments.Sysmon.Emitter do
+  @moduledoc """
+  The Emitter is a simple module that subscribes to the Reporter and will invoke
+  the corresponding handler on the Receiver.
+  """
+
   use GenServer
 
   require Logger
@@ -13,6 +18,10 @@ defmodule Instruments.Sysmon.Emitter do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @doc """
+  Sets the receiver module to handle system monitor events. Receiver modules must implement the `Instruments.Sysmon.Receiver` behaviour.
+  """
+  @spec set_receiver(term()) :: :ok
   def set_receiver(receiver_module) do
     GenServer.call(__MODULE__, {:set_receiver, receiver_module})
   end

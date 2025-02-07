@@ -1,4 +1,8 @@
 defmodule Instruments.Sysmon.Receiver do
+  @moduledoc """
+  The Receiver behavior defines callbacks that are invoked by the Emitter in
+  response to system monitor events.
+  """
 
   @type info :: List.t({term(), term()})
 
