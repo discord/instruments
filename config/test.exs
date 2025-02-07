@@ -14,3 +14,7 @@ config :logger,
   ]
 
 config :statix, port: 15310
+
+config :instruments,
+  # Don't start the system monitor by default, the tests will start it
+  enable_sysmon: false

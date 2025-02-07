@@ -28,7 +28,7 @@ defmodule Instruments.Sysmon.Reporter do
     GenServer.call(__MODULE__, {:subscribe, pid})
   end
 
-  def unsubscribe(pid) do
+  def unsubscribe(pid \\ self()) do
     GenServer.call(__MODULE__, {:unsubscribe, pid})
   end
 
@@ -132,6 +132,14 @@ defmodule Instruments.Sysmon.Reporter do
 
     Enum.each(state.subscribers, fn {_, pid} -> send(pid, to_forward) end)
     {:noreply, state}
+  end
+
+  defp enable_sysmon(nil) do
+    enable_sysmon([])
+  end
+
+  defp enable_sysmon([]) do
+    :ok
   end
 
   defp enable_sysmon(events) do
