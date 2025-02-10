@@ -30,6 +30,10 @@ There are a couple of `Instruments` specific application variables:
 * `probe_prefix`: A global prefix to apply to all probes.
 * `statsd_port`: The port that the statsd server listens on. Should be the same as the port in the statix 
                  configuration above.
+* `enable_sysmon`: Enables and registers `Instruments.Sysmon.Reporter` with `:erlang.system_monitor/1` to receive system 
+                   monitor events.
+* `sysmon_receiver`: The `Instruments.Sysmon.Receiver` that handles sysmon events. Defaults to `Instruments.Sysmon.Receiver.Metrics`
+* `sysmon_events`: The list of system monitor events that `Instruments.Sysmon.Reporter` will subscribe to. Defaults to `[]`
 
 For example:
 
