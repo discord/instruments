@@ -179,7 +179,7 @@ defmodule Instruments.Sysmon.Reporter do
 
       {pid, _} ->
         # Another process is already receiving system monitor events, log a warning
-        Logger.warning("Overwriting system monitor process: #{inspect(pid)}")
+        Logger.warn("Overwriting system monitor process: #{inspect(pid)}")
     end
 
     :erlang.system_monitor(our_pid, events)

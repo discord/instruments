@@ -15,7 +15,7 @@ defmodule Instruments.Sysmon.Emitter do
   ]
 
   def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts)
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   @doc """
@@ -46,7 +46,8 @@ defmodule Instruments.Sysmon.Emitter do
     {:noreply, state}
   end
 
-  def handle_info(_, state) do
+  def handle_info(unknown, state) do
+    Logger.error("Emitter received unknown message: #{inspect(unknown)}")
     {:noreply, state}
   end
 
@@ -75,6 +76,6 @@ defmodule Instruments.Sysmon.Emitter do
   end
 
   defp handle_event(%__MODULE__{}, event, data) do
-    Logger.warning("Emitter received unknown event #{inspect(event)} with data #{inspect(data)}")
+    Logger.warn("Emitter received unknown event #{inspect(event)} with data #{inspect(data)}")
   end
 end

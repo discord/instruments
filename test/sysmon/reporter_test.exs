@@ -5,7 +5,9 @@ defmodule Instruments.Sysmon.ReporterTest do
 
   describe "subscriptions" do
     setup do
-      reporter_pid = start_link_supervised!(Reporter)
+      {:ok, reporter_pid} = start_supervised(Reporter)
+      Process.link(reporter_pid)
+
       {:ok, %{
         reporter_pid: reporter_pid
       }}
@@ -48,14 +50,17 @@ defmodule Instruments.Sysmon.ReporterTest do
         Application.put_env(:instruments, :sysmon_events, prev)
       end)
       Application.put_env((:instruments), :sysmon_events, [:busy_port, :busy_dist_port])
-      pid = start_link_supervised!(Reporter)
+      {:ok, pid} = start_supervised(Reporter)
+      Process.link(pid)
 
       assert Reporter.get_events() == [:busy_port, :busy_dist_port]
       assert :erlang.system_monitor() == {pid, [:busy_dist_port, :busy_port]}
     end
 
     test "can be reconfigured" do
-      pid = start_link_supervised!(Reporter)
+      {:ok, pid} = start_supervised(Reporter)
+      Process.link(pid)
+
       Reporter.set_events([:busy_port, :busy_dist_port])
       assert :erlang.system_monitor() == {pid, [:busy_dist_port, :busy_port]}
     end
