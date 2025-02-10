@@ -93,11 +93,11 @@ defmodule Instruments.Sysmon.Reporter do
   end
 
   def handle_call({:unsubscribe, pid}, _from, %__MODULE__{} = state) do
-    ref = Map.filter(state.subscribers, fn {_, p} -> p == pid end) |> Map.keys()
+    ref = state.subscribers |> Enum.filter(fn {_, p} -> p == pid end)
 
     state =
       case ref do
-        [ref] ->
+        [{ref, _pid}] ->
           Process.demonitor(ref)
 
           %__MODULE__{

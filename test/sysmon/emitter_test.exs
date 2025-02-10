@@ -42,8 +42,11 @@ defmodule Instruments.EmitterTest do
     Process.register(self(), TestEmitterReceiver)
     Application.put_env(:instruments, :sysmon_receiver, TestEmitter)
 
-    start_link_supervised!(Reporter)
-    pid = start_link_supervised!(Emitter)
+    {:ok, reporter_pid} = start_supervised(Reporter)
+    Process.link(reporter_pid)
+
+    {:ok, pid} = start_supervised(Emitter)
+    Process.link(pid)
 
     {:ok, pid: pid}
   end

@@ -17,6 +17,13 @@ defmodule Instruments.Sysmon.ReporterTest do
       assert Map.values(state.subscribers) == [self()]
     end
 
+    test "can subscribe more than once", ctx do
+      :ok = Reporter.subscribe()
+      :ok = Reporter.subscribe()
+      state = :sys.get_state(ctx.reporter_pid)
+      assert Map.values(state.subscribers) == [self()]
+    end
+
     test "allows unsubscribing", ctx do
       :ok = Reporter.subscribe()
       :ok = Reporter.unsubscribe()
