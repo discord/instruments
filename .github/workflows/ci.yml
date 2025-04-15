@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build and test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       # This depends on listening on a UDP socket on a fixed port so only 1 at a time.
       max-parallel: 1
