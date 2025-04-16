@@ -224,6 +224,7 @@ defmodule Instruments do
   Registers the following probes:
 
     1. `erlang.memory`: Reports how much memory is being used by the `process`, `system`, `atom`, `binary` and `ets` carriers.
+    1. `erlang.supercarrier`: Reports the total size of the [super carrier](https://www.erlang.org/doc/apps/erts/supercarrier.html), and how much of it is used.
     1. `recon.alloc`: Reports how much memory is being actively used by the VM.
     1. `erlang.system.process_count`: A gauge reporting the number of processes in the VM.
     1. `erlang.system.port_count`: A gauge reporting the number of ports in the VM.
@@ -264,6 +265,25 @@ defmodule Instruments do
         report_interval: report_interval
       )
 
+      cond do
+        # The supercarrier is part of mseg_alloc (the flags are all under +MMsc*, where the second "M" refers to `mseg_alloc`)
+        # https://www.erlang.org/doc/apps/erts/erts_alloc.html
+        has_allocator_feature?(:mseg_alloc) ->
+          Probe.define!("erlang.supercarrier", :gauge,
+            function: fn ->
+              erts_mmap_info = :erlang.system_info({:allocator, :erts_mmap})
+
+              get_in(erts_mmap_info, [:default_mmap, :supercarrier, :sizes]) || [total: 0, used: 0]
+            end,
+            keys: ~w(total used)a,
+            report_interval: report_interval
+          )
+
+        Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) ->
+          Logger.warn("[Instruments] not collecting memory metrics because :mseg_alloc is not enabled")
+
+        true -> :ok
+      end
     rescue
       ErlangError ->
         if Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) do
@@ -299,5 +319,12 @@ defmodule Instruments do
     )
 
     :ok
+  end
+
+  @spec has_allocator_feature?(atom()) :: boolean()
+  defp has_allocator_feature?(feature) do
+    {_allocator, _version, features, _settings} = :erlang.system_info(:allocator)
+
+    Enum.member?(features, feature)
   end
 end
