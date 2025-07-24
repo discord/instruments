@@ -5,6 +5,7 @@ defmodule Instruments.Application do
 
   alias Instruments.{
     FastCounter,
+    FastGauge,
     Probe
   }
 
@@ -14,6 +15,7 @@ defmodule Instruments.Application do
 
     children = [
       FastCounter,
+      FastGauge,
       Probe.Definitions,
       Probe.Supervisor,
     ]

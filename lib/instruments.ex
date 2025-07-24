@@ -49,6 +49,7 @@ defmodule Instruments do
 
   alias Instruments.{
     FastCounter,
+    FastGauge,
     MacroHelpers,
     Probe,
     Probes
@@ -95,7 +96,7 @@ defmodule Instruments do
   for system metrics that have a specific value at a specific time.
   """
   defmacro gauge(key, value, options \\ []),
-    do: MacroHelpers.build_metric_macro(:gauge, __CALLER__, @metrics_module, key, value, options)
+    do: MacroHelpers.build_metric_macro(:gauge, __CALLER__, FastGauge, key, value, options)
 
   @doc """
   Adds a value to a histogram
