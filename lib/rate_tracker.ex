@@ -9,7 +9,8 @@ defmodule Instruments.RateTracker do
   application slowing significantly.
   """
 
-  @table_name :instruments_rate_tracker
+  @table_prefix :instruments_rate_tracker
+  @max_tables 128
   @report_interval_ms Application.get_env(
                         :instruments,
                         :rate_tracker_report_interval,
@@ -27,14 +28,16 @@ defmodule Instruments.RateTracker do
 
   @type t :: %__MODULE__{
           last_update_time: integer(),
-          callbacks: [callback()]
+          callbacks: [callback()],
+          table_count: non_neg_integer()
         }
 
   @type callback :: ({String.t(), Statix.options()}, non_neg_integer() -> term())
 
-  @enforce_keys [:last_update_time]
+  @enforce_keys [:last_update_time, :table_count]
   defstruct [
     :last_update_time,
+    :table_count,
     callbacks: []
   ]
 
@@ -43,13 +46,18 @@ defmodule Instruments.RateTracker do
   end
 
   def init(:ok) do
-    :ets.new(@table_name, [:named_table, :public, :set])
+    table_count = :erlang.system_info(:schedulers)
+
+    for scheduler_id <- 1..table_count do
+      :ets.new(table_name(scheduler_id), [:named_table, :public, :set])
+    end
 
     schedule_report()
 
     {:ok,
      %__MODULE__{
        last_update_time: time(),
+       table_count: table_count,
        callbacks: []
      }}
   end
@@ -60,7 +68,7 @@ defmodule Instruments.RateTracker do
   @spec track(iodata, Statix.options()) :: :ok
   def track(name, options \\ []) do
     table_key = get_table_key(name, options)
-    :ets.update_counter(@table_name, table_key, 1, {table_key, 0})
+    :ets.update_counter(current_table(), table_key, 1, {table_key, 0})
 
     :ok
   end
@@ -86,12 +94,20 @@ defmodule Instruments.RateTracker do
   """
   @spec dump_rates() :: [{{String.t(), Keyword.t()}, non_neg_integer()}]
   def dump_rates() do
-    @table_name
-    |> :ets.tab2list()
+    table_count = :erlang.system_info(:schedulers)
+
+    1..table_count
+    |> Enum.flat_map(fn scheduler_id ->
+      scheduler_id
+      |> table_name()
+      |> :ets.tab2list()
+    end)
+    |> aggregate_stats()
     |> Enum.filter(fn
       {_key, 0} -> false
       {_key, _rate} -> true
     end)
+    |> Enum.to_list()
   end
 
   ## GenServer callbacks
@@ -104,24 +120,13 @@ defmodule Instruments.RateTracker do
 
   def handle_info(:report, %__MODULE__{} = state) do
     report_time = time()
-
     time_since_report = report_time - state.last_update_time
+    threshold = Application.get_env(:instruments, :rate_tracker_callback_threshold, nil)
+
     # Extraordinarily unlikely to be zero, but if it is for some reason, we'll just skip this
     # and let the next report get it
-    if time_since_report > 0 do
-      @table_name
-      |> :ets.tab2list()
-      |> Enum.each(fn {key, num_tracked} ->
-        :ets.update_counter(@table_name, key, -num_tracked)
-
-        # This is technically approximate (we don't know if Statix or another underlying lib will report this differently)
-        tracked_per_second = num_tracked / time_since_report * sample_rate_for_key(key)
-        threshold = Application.get_env(:instruments, :rate_tracker_callback_threshold, nil)
-
-        if threshold != nil and tracked_per_second > threshold do
-          Enum.each(state.callbacks, fn callback -> callback.(key, tracked_per_second) end)
-        end
-      end)
+    if threshold != nil and time_since_report > 0 do
+      do_report(state, time_since_report, threshold)
     end
 
     schedule_report()
@@ -162,5 +167,46 @@ defmodule Instruments.RateTracker do
   defp time() do
     # Dividing so we can get the fractional part
     System.monotonic_time(:microsecond) / 1_000_000
+  end
+
+  defp current_table() do
+    table_name(:erlang.system_info(:scheduler_id))
+  end
+
+  defp aggregate_stats(table_data) do
+    Enum.reduce(table_data, %{}, fn {key, val}, acc ->
+      Map.update(acc, key, val, &(&1 + val))
+    end)
+  end
+
+  defp do_report(%__MODULE__{} = state, time_since_report, threshold) do
+    dump_and_flush_data = fn scheduler_id ->
+      table_name = table_name(scheduler_id)
+      table_data = :ets.tab2list(table_name)
+
+      Enum.each(table_data, fn {key, val} ->
+        :ets.update_counter(table_name, key, -val)
+      end)
+
+      table_data
+    end
+
+    1..state.table_count
+    |> Enum.flat_map(dump_and_flush_data)
+    |> aggregate_stats()
+    |> Enum.each(fn {key, num_tracked} ->
+      # Sampling correction  is technically approximate (we don't know if Statix or another underlying lib will report this differently)
+      tracked_per_second = num_tracked / time_since_report * sample_rate_for_key(key)
+
+      if tracked_per_second > threshold do
+        Enum.each(state.callbacks, fn callback -> callback.(key, tracked_per_second) end)
+      end
+    end)
+  end
+
+  for scheduler_id <- 1..@max_tables do
+    defp table_name(unquote(scheduler_id)) do
+      unquote(:"#{@table_prefix}_#{scheduler_id}")
+    end
   end
 end
