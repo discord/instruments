@@ -55,9 +55,7 @@ defmodule Instruments.RateTracker do
   end
 
   ## Public
-  @doc """
-  Report that this metric was just emitted.
-  """
+  @doc false
   @spec track(iodata) :: :ok
   @spec track(iodata, Statix.options()) :: :ok
   def track(name, options \\ []) do
