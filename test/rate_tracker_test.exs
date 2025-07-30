@@ -4,14 +4,14 @@ defmodule Instruments.RateTrackerTest do
   alias Instruments.RateTracker
 
   setup do
-    old_threshold = Application.get_env(:instruments, :rate_tracker_report_threshold)
-    Application.put_env(:instruments, :rate_tracker_report_threshold, 5)
+    old_threshold = Application.get_env(:instruments, :rate_tracker_callback_threshold)
+    Application.put_env(:instruments, :rate_tracker_callback_threshold, 5)
 
     on_exit(fn ->
       if old_threshold do
-        Application.put_env(:instruments, :rate_tracker_report_threshold, old_threshold)
+        Application.put_env(:instruments, :rate_tracker_callback_threshold, old_threshold)
       else
-        Application.delete_env(:instruments, :rate_tracker_report_threshold)
+        Application.delete_env(:instruments, :rate_tracker_callback_threshold)
       end
     end)
 

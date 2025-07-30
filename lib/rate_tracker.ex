@@ -6,7 +6,7 @@ defmodule Instruments.RateTracker do
   RateTracker is designed to catch cases where you have inadvertently reported 
   a metric "too" frequently, as some metrics require hitting statsd directly for 
   every reported value. Doing so in hot loops can result in your 
-  slowing significantly.
+  application slowing significantly.
   """
 
   @table_name :instruments_rate_tracker
@@ -27,15 +27,15 @@ defmodule Instruments.RateTracker do
 
   @type t :: %__MODULE__{
           last_update_time: integer(),
-          listeners: [listener()]
+          callbacks: [callback()]
         }
 
-  @type listener :: ({String.t(), Statix.options()}, non_neg_integer() -> term())
+  @type callback :: ({String.t(), Statix.options()}, non_neg_integer() -> term())
 
   @enforce_keys [:last_update_time]
   defstruct [
     :last_update_time,
-    listeners: []
+    callbacks: []
   ]
 
   def start_link(_ \\ []) do
@@ -50,7 +50,7 @@ defmodule Instruments.RateTracker do
     {:ok,
      %__MODULE__{
        last_update_time: time(),
-       listeners: []
+       callbacks: []
      }}
   end
 
@@ -71,16 +71,16 @@ defmodule Instruments.RateTracker do
   Add a callback to be notified that you are reporting a metric "too" frequently.
 
   In order to receive notifications, you must set `:instruments` -> 
-  `:rate_tracker_report_threshold` to the per-second rate that you want to be 
+  `:rate_tracker_callback_threshold` to the per-second rate that you want to be 
   notified at. This value will be different for every system, and will require
   experimentation to determine. You can use `dump_rates()` in a remote console
   to see what values are currently tracked for your metrics.
 
   This callback should be short-lived.
   """
-  @spec subscribe(listener()) :: :ok
-  def subscribe(listener) do
-    GenServer.cast(__MODULE__, {:subscribe, listener})
+  @spec subscribe(callback()) :: :ok
+  def subscribe(callback) do
+    GenServer.cast(__MODULE__, {:subscribe, callback})
   end
 
   @doc """
@@ -98,8 +98,8 @@ defmodule Instruments.RateTracker do
 
   ## GenServer callbacks
 
-  def handle_cast({:subscribe, listener}, %__MODULE__{} = state) do
-    state = %__MODULE__{state | listeners: [listener | state.listeners]}
+  def handle_cast({:subscribe, callback}, %__MODULE__{} = state) do
+    state = %__MODULE__{state | callbacks: [callback | state.callbacks]}
 
     {:noreply, state}
   end
@@ -107,22 +107,21 @@ defmodule Instruments.RateTracker do
   def handle_info(:report, %__MODULE__{} = state) do
     report_time = time()
 
-    time_since_report = (report_time - state.last_update_time) / 1_000_000
-
+    time_since_report = report_time - state.last_update_time
     # Extraordinarily unlikely to be zero, but if it is for some reason, we'll just skip this
     # and let the next report get it
     if time_since_report > 0 do
       @table_name
       |> :ets.tab2list()
-      |> Enum.each(fn {key, num_reports} ->
-        :ets.update_counter(@table_name, key, -num_reports)
+      |> Enum.each(fn {key, num_tracked} ->
+        :ets.update_counter(@table_name, key, -num_tracked)
 
         # This is technically approximate (we don't know if Statix or another underlying lib will report this differently)
-        reports_per_second = num_reports / time_since_report * sample_rate_for_key(key)
-        threshold = Application.get_env(:instruments, :rate_tracker_report_threshold, nil)
+        tracked_per_second = num_tracked / time_since_report * sample_rate_for_key(key)
+        threshold = Application.get_env(:instruments, :rate_tracker_callback_threshold, nil)
 
-        if threshold != nil and reports_per_second > threshold do
-          Enum.each(state.listeners, fn listener -> listener.(key, reports_per_second) end)
+        if threshold != nil and tracked_per_second > threshold do
+          Enum.each(state.callbacks, fn callback -> callback.(key, tracked_per_second) end)
         end
       end)
     end
@@ -163,6 +162,7 @@ defmodule Instruments.RateTracker do
   end
 
   defp time() do
-    System.monotonic_time(:microsecond)
+    # Dividing so we can get the fractional part
+    System.monotonic_time(:microsecond) / 1_000_000
   end
 end
