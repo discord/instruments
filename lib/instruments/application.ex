@@ -6,7 +6,8 @@ defmodule Instruments.Application do
   alias Instruments.{
     FastCounter,
     FastGauge,
-    Probe
+    Probe,
+    RateTracker
   }
 
   def start(_type, _args) do
@@ -18,13 +19,15 @@ defmodule Instruments.Application do
       FastGauge,
       Probe.Definitions,
       Probe.Supervisor,
+      RateTracker
     ]
 
-    children = if Application.get_env(:instruments, :enable_sysmon, false) do
-      [Instruments.Sysmon.Supervisor | children]
-    else
-      children
-    end
+    children =
+      if Application.get_env(:instruments, :enable_sysmon, false) do
+        [Instruments.Sysmon.Supervisor | children]
+      else
+        children
+      end
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Instruments.Supervisor)
   end
