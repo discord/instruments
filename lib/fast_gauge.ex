@@ -7,7 +7,7 @@ defmodule Instruments.FastGauge do
   # it was recorded at.
   #
   # The Instruments.FastGauge process periodically reports the most recent value
-  # for every table key, deleting values that have been reported or ignored.
+  # for every table key, deleting entries that have been reported or ignored.
   @table_prefix :instruments_gauges
   @max_tables 128
   @report_interval_ms Application.compile_env(
