@@ -1,11 +1,11 @@
 defmodule Instruments.FastGauge do
   @table_name :instruments_gauges
-  @report_interval_ms Application.get_env(
+  @report_interval_ms Application.compile_env(
                         :instruments,
                         :fast_gauge_report_interval,
                         10_000
                       )
-  @report_jitter_range_ms Application.get_env(
+  @report_jitter_range_ms Application.compile_env(
                             :instruments,
                             :fast_gauge_report_jitter_range,
                             -500..500
