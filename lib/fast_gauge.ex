@@ -20,9 +20,9 @@ defmodule Instruments.FastGauge do
                             :fast_gauge_report_jitter_range,
                             -500..500
                           )
-  @compile {:inline, get_table_key: 2, latest_table_entry_value: 2}
+  @compile {:inline, get_table_key: 2, latest_table_entry: 2}
 
-  @type table_entry_value :: {gauge_value :: number(), recorded_timestamp :: pos_integer()}
+  @type table_entry :: {gauge_value :: number(), recorded_timestamp :: pos_integer()}
 
   use GenServer
 
@@ -62,12 +62,12 @@ defmodule Instruments.FastGauge do
 
       Enum.each(table_results, & :ets.delete_object(table_name, &1))
 
-      Map.merge(acc, table_results, fn key, value_old, value_new ->
-        latest_table_entry_value(value_old, value_new)
+      Map.merge(acc, table_results, fn _key, table_entry_old, table_entry_new ->
+        latest_table_entry(table_entry_old, table_entry_new)
       end)
     end)
     |> Enum.each(
-      fn {table_key, {value, _timestamp}} ->
+      fn {table_key, {value, _recorded_timestamp}} ->
         report_stat({table_key, value}, reporter_module)
       end
     )
@@ -101,13 +101,13 @@ defmodule Instruments.FastGauge do
     end
   end
 
-  @spec latest_table_entry_value(table_entry_value(), table_entry_value()) :: table_entry_value()
-  defp latest_table_entry_value({value_1, recorded_timestamp_1}, {_value_2, recorded_timestamp_2}) when recorded_timestamp_1 > recorded_timestamp_2 do
-    {value_1, recorded_timestamp_1}
+  @spec latest_table_entry(table_entry(), table_entry()) :: table_entry()
+  defp latest_table_entry({_gauge_value_1, recorded_timestamp_1} = entry_1, {_gauge_value_2, recorded_timestamp_2} = entry_2) when recorded_timestamp_1 > recorded_timestamp_2 do
+    entry_1
   end
 
-  defp latest_table_entry_value({_value_1, recorded_timestamp_1}, {value_2, recorded_timestamp_2}) do
-    {value_2, recorded_timestamp_2}
+  defp latest_table_entry(entry_1, entry_2) do
+    entry_2
   end
 
   defp report_stat({{metric_name, opts}, value}, reporter_module) do
