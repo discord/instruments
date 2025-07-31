@@ -20,7 +20,9 @@ defmodule Instruments.FastGauge do
                             :fast_gauge_report_jitter_range,
                             -500..500
                           )
-  @compile {:inline, get_table_key: 2}
+  @compile {:inline, get_table_key: 2, latest_table_entry_value: 2}
+
+  @type table_entry_value :: {gauge_value :: number(), recorded_timestamp :: pos_integer()}
 
   use GenServer
 
@@ -56,24 +58,13 @@ defmodule Instruments.FastGauge do
     1..table_count
     |> Enum.map(fn scheduler_id -> table_name(scheduler_id) end)
     |> Enum.reduce(%{}, fn table_name, acc ->
-      # Aggregate the "most recent" value for each key across all tables
-      table_name
-      |> :ets.tab2list()
-      |> Enum.reduce(
-        acc,
-        fn {table_key, {value, timestamp}}, acc ->
-          :ets.delete_object(table_name, {table_key, {value, timestamp}})
+      table_results = :ets.tab2list(table_name) |> Map.new()
 
-          # Only keep most recent timestamp
-          Map.update(acc, table_key, {value, timestamp}, fn {existing_value, existing_timestamp} ->
-            if existing_timestamp > timestamp do
-              {existing_value, existing_timestamp}
-            else
-              {value, timestamp}
-            end
-          end)
-        end
-      )
+      Enum.each(table_results, & :ets.delete_object(table_name, &1))
+
+      Map.merge(acc, table_results, fn key, value_old, value_new ->
+        latest_table_entry_value(value_old, value_new)
+      end)
     end)
     |> Enum.each(
       fn {table_key, {value, _timestamp}} ->
@@ -86,6 +77,9 @@ defmodule Instruments.FastGauge do
   end
 
   ## Private
+  defp current_table() do
+    table_name(:erlang.system_info(:scheduler_id))
+  end
 
   defp get_table_key(name, []) do
     {name, []}
@@ -107,6 +101,15 @@ defmodule Instruments.FastGauge do
     end
   end
 
+  @spec latest_table_entry_value(table_entry_value(), table_entry_value()) :: table_entry_value()
+  defp latest_table_entry_value({value_1, recorded_timestamp_1}, {_value_2, recorded_timestamp_2}) when recorded_timestamp_1 > recorded_timestamp_2 do
+    {value_1, recorded_timestamp_1}
+  end
+
+  defp latest_table_entry_value({_value_1, recorded_timestamp_1}, {value_2, recorded_timestamp_2}) do
+    {value_2, recorded_timestamp_2}
+  end
+
   defp report_stat({{metric_name, opts}, value}, reporter_module) do
     reporter_module.gauge(metric_name, value, opts)
   end
@@ -114,10 +117,6 @@ defmodule Instruments.FastGauge do
   defp schedule_report() do
     wait_time = @report_interval_ms + Enum.random(@report_jitter_range_ms)
     Process.send_after(self(), :report, wait_time)
-  end
-
-  defp current_table() do
-    table_name(:erlang.system_info(:scheduler_id))
   end
 
   for scheduler_id <- 1..@max_tables do
