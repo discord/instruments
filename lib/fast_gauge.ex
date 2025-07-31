@@ -58,7 +58,9 @@ defmodule Instruments.FastGauge do
     1..table_count
     |> Enum.map(fn scheduler_id -> table_name(scheduler_id) end)
     |> Enum.reduce(%{}, fn table_name, acc ->
-      table_results = :ets.tab2list(table_name) |> Map.new()
+      table_results = table_name
+        |> :ets.tab2list()
+        |> Map.new()
 
       Enum.each(table_results, & :ets.delete_object(table_name, &1))
 
