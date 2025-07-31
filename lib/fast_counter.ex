@@ -62,7 +62,7 @@ defmodule Instruments.FastCounter do
   def handle_info(:report, {reporter_module, table_count} = state) do
     # dump the scheduler's data and decrement its
     # counters by the amount we dumped.
-    dump_and_flush_data = fn scheduler_id ->
+    dump_and_clear_data = fn scheduler_id ->
       table_name = table_name(scheduler_id)
       table_data = :ets.tab2list(table_name)
 
@@ -79,7 +79,7 @@ defmodule Instruments.FastCounter do
     end
 
     1..table_count
-    |> Enum.flat_map(dump_and_flush_data)
+    |> Enum.flat_map(dump_and_clear_data)
     |> Enum.reduce(%{}, aggregate_stats)
     |> Enum.each(&report_stat(&1, reporter_module))
 

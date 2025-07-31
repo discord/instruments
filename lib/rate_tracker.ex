@@ -180,7 +180,7 @@ defmodule Instruments.RateTracker do
   end
 
   defp do_report(%__MODULE__{} = state, time_since_report, threshold) do
-    dump_and_flush_data = fn scheduler_id ->
+    dump_and_clear_data = fn scheduler_id ->
       table_name = table_name(scheduler_id)
       table_data = :ets.tab2list(table_name)
 
@@ -192,7 +192,7 @@ defmodule Instruments.RateTracker do
     end
 
     1..state.table_count
-    |> Enum.flat_map(dump_and_flush_data)
+    |> Enum.flat_map(dump_and_clear_data)
     |> aggregate_stats()
     |> Enum.each(fn {key, num_tracked} ->
       # Sampling correction  is technically approximate (we don't know if Statix or another underlying lib will report this differently)
