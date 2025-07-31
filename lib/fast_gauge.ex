@@ -108,11 +108,11 @@ defmodule Instruments.FastGauge do
          {_gauge_value_right, recorded_timestamp_right}
        )
        when recorded_timestamp_left > recorded_timestamp_right do
-    entry_1
+    left
   end
 
   defp latest_table_entry(_left, right) do
-    entry_2
+    right
   end
 
   defp report_stat({{metric_name, opts}, value}, reporter_module) do
