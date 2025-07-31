@@ -104,11 +104,11 @@ defmodule Instruments.FastGauge do
   end
 
   @spec latest_table_entry(table_entry(), table_entry()) :: table_entry()
-  defp latest_table_entry({_gauge_value_1, recorded_timestamp_1} = entry_1, {_gauge_value_2, recorded_timestamp_2} = entry_2) when recorded_timestamp_1 > recorded_timestamp_2 do
+  defp latest_table_entry({_gauge_value_1, recorded_timestamp_1} = entry_1, {_gauge_value_2, recorded_timestamp_2}) when recorded_timestamp_1 > recorded_timestamp_2 do
     entry_1
   end
 
-  defp latest_table_entry(entry_1, entry_2) do
+  defp latest_table_entry(_entry_1, entry_2) do
     entry_2
   end
 
