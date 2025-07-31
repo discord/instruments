@@ -1,12 +1,6 @@
-In addition to Benchee's default non-parallel settings, I also ran this with a parallelism of 8,
-because I expect the periodic `:ets.tab2list` in Instruments.FastGauge will affect performance
-more if there are more concurrent ets operations while it's executing. It uses `:ets.match_object/3`
-which uses `:ets.safe_fixtable/2`, and as the ets docs for `:ets.safe_fixtable/2` say, 
-"The performance of operations on the table also degrades significantly" while the table is fixed.
-
-I also ran this against a version that used `:ets.tab2list` instead of `:ets.foldl`, which seemed
-to perform mostly the same (and also fixes the table), and ended up going with `:ets.tab2list`. 
-That comparison is in the section "Benchee output comparing tab2list with foldl" below.
+Table of Contents:
+Benchee output (final FastGauge implementation vs Statix.Gauge)
+Benchee output comparing one ETS table vs one ETS table per scheduler:
 
 Benchee output (final FastGauge implementation vs Statix.Gauge)
 =========================================================================================================
@@ -44,57 +38,57 @@ Formatting results...
 
 ##### With input 1. No Options #####
 Name                             ips        average  deviation         median         99th %
-fastgauge_non_parallel       51.35 K       19.48 μs    ±13.45%       19.21 μs       26.71 μs
-gauge_non_parallel            1.47 K      679.80 μs     ±2.52%      679.66 μs      708.58 μs
+fastgauge_non_parallel       33.88 K       29.51 μs    ±28.23%       28.96 μs       38.57 μs
+gauge_non_parallel            1.48 K      676.73 μs     ±2.16%      675.19 μs      741.91 μs
 
 Comparison: 
-fastgauge_non_parallel       51.35 K
-gauge_non_parallel            1.47 K - 34.90x slower +660.32 μs
+fastgauge_non_parallel       33.88 K
+gauge_non_parallel            1.48 K - 22.93x slower +647.21 μs
 
 ##### With input 2. No Tags #####
 Name                             ips        average  deviation         median         99th %
-fastgauge_non_parallel       36.96 K       27.06 μs    ±14.47%       26.65 μs       35.57 μs
-gauge_non_parallel            1.41 K      710.00 μs     ±3.13%      708.89 μs      740.58 μs
+fastgauge_non_parallel       27.10 K       36.91 μs     ±8.32%       36.30 μs       46.32 μs
+gauge_non_parallel            1.41 K      708.80 μs     ±1.71%      707.84 μs      748.02 μs
 
 Comparison: 
-fastgauge_non_parallel       36.96 K
-gauge_non_parallel            1.41 K - 26.24x slower +682.95 μs
+fastgauge_non_parallel       27.10 K
+gauge_non_parallel            1.41 K - 19.21x slower +671.90 μs
 
 ##### With input 3. Empty Tags #####
 Name                             ips        average  deviation         median         99th %
-fastgauge_non_parallel       31.70 K       31.54 μs    ±10.58%       31.04 μs       40.40 μs
-gauge_non_parallel            1.40 K      716.49 μs     ±2.18%      716.25 μs      746.47 μs
+fastgauge_non_parallel       24.04 K       41.61 μs     ±7.72%       40.91 μs       50.66 μs
+gauge_non_parallel            1.40 K      713.36 μs     ±1.52%      712.51 μs      747.60 μs
 
 Comparison: 
-fastgauge_non_parallel       31.70 K
-gauge_non_parallel            1.40 K - 22.71x slower +684.95 μs
+fastgauge_non_parallel       24.04 K
+gauge_non_parallel            1.40 K - 17.15x slower +671.76 μs
 
 ##### With input 4. One Tag #####
 Name                             ips        average  deviation         median         99th %
-fastgauge_non_parallel       27.74 K       36.05 μs    ±15.23%       35.47 μs       44.64 μs
-gauge_non_parallel            1.37 K      728.89 μs     ±1.66%      728.54 μs      752.11 μs
+fastgauge_non_parallel       21.43 K       46.66 μs     ±9.42%       46.04 μs       54.06 μs
+gauge_non_parallel            1.37 K      732.22 μs     ±4.73%      728.12 μs      818.03 μs
 
 Comparison: 
-fastgauge_non_parallel       27.74 K
-gauge_non_parallel            1.37 K - 20.22x slower +692.84 μs
+fastgauge_non_parallel       21.43 K
+gauge_non_parallel            1.37 K - 15.69x slower +685.56 μs
 
 ##### With input 5. Five Tags #####
 Name                             ips        average  deviation         median         99th %
-fastgauge_non_parallel       15.19 K       65.85 μs     ±7.59%       65.03 μs       74.16 μs
-gauge_non_parallel            1.33 K      752.24 μs     ±2.11%      751.52 μs      781.08 μs
+fastgauge_non_parallel       12.97 K       77.08 μs     ±5.79%       76.29 μs       86.76 μs
+gauge_non_parallel            1.33 K      754.57 μs     ±1.92%      752.99 μs      819.40 μs
 
 Comparison: 
-fastgauge_non_parallel       15.19 K
-gauge_non_parallel            1.33 K - 11.42x slower +686.40 μs
+fastgauge_non_parallel       12.97 K
+gauge_non_parallel            1.33 K - 9.79x slower +677.49 μs
 
 ##### With input 6. Ten Tags #####
 Name                             ips        average  deviation         median         99th %
-fastgauge_non_parallel        8.84 K      113.16 μs     ±5.53%      111.74 μs      123.37 μs
-gauge_non_parallel            1.28 K      778.77 μs     ±1.76%      778.22 μs      809.30 μs
+fastgauge_non_parallel        8.18 K      122.22 μs     ±4.45%      120.78 μs      132.53 μs
+gauge_non_parallel            1.26 K      791.22 μs     ±1.52%      789.99 μs      831.49 μs
 
 Comparison: 
-fastgauge_non_parallel        8.84 K
-gauge_non_parallel            1.28 K - 6.88x slower +665.62 μs
+fastgauge_non_parallel        8.18 K
+gauge_non_parallel            1.26 K - 6.47x slower +669.00 μs
 Suite saved in external term format at bench/results/fast_gauge/non_parallel.benchee
 Operating System: Linux
 CPU Information: Intel(R) Xeon(R) CPU @ 3.10GHz
@@ -130,166 +124,62 @@ Formatting results...
 
 ##### With input 1. No Options #####
 Name                           ips        average  deviation         median         99th %
-fastgauge_parallel_8        1.54 K        0.65 ms    ±13.00%        0.64 ms        0.85 ms
-gauge_parallel_8            0.23 K        4.35 ms     ±1.80%        4.31 ms        4.52 ms
+fastgauge_parallel_8       33.00 K      0.0303 ms    ±29.88%      0.0297 ms      0.0393 ms
+gauge_parallel_8            0.23 K        4.31 ms     ±2.94%        4.30 ms        4.70 ms
 
 Comparison: 
-fastgauge_parallel_8        1.54 K
-gauge_parallel_8            0.23 K - 6.72x slower +3.70 ms
+fastgauge_parallel_8       33.00 K
+gauge_parallel_8            0.23 K - 142.14x slower +4.28 ms
 
 ##### With input 2. No Tags #####
 Name                           ips        average  deviation         median         99th %
-fastgauge_parallel_8        1.46 K        0.68 ms    ±10.28%        0.68 ms        0.84 ms
-gauge_parallel_8            0.23 K        4.37 ms     ±2.19%        4.31 ms        4.57 ms
+fastgauge_parallel_8       26.24 K      0.0381 ms    ±22.09%      0.0374 ms      0.0504 ms
+gauge_parallel_8            0.23 K        4.28 ms     ±2.28%        4.28 ms        4.52 ms
 
 Comparison: 
-fastgauge_parallel_8        1.46 K
-gauge_parallel_8            0.23 K - 6.39x slower +3.68 ms
+fastgauge_parallel_8       26.24 K
+gauge_parallel_8            0.23 K - 112.41x slower +4.25 ms
 
 ##### With input 3. Empty Tags #####
 Name                           ips        average  deviation         median         99th %
-fastgauge_parallel_8        1.38 K        0.72 ms    ±10.00%        0.72 ms        0.89 ms
-gauge_parallel_8            0.23 K        4.39 ms     ±2.00%        4.41 ms        4.58 ms
+fastgauge_parallel_8       23.47 K      0.0426 ms    ±20.23%      0.0419 ms      0.0543 ms
+gauge_parallel_8            0.23 K        4.33 ms     ±2.41%        4.31 ms        4.94 ms
 
 Comparison: 
-fastgauge_parallel_8        1.38 K
-gauge_parallel_8            0.23 K - 6.06x slower +3.67 ms
+fastgauge_parallel_8       23.47 K
+gauge_parallel_8            0.23 K - 101.54x slower +4.28 ms
 
 ##### With input 4. One Tag #####
 Name                           ips        average  deviation         median         99th %
-fastgauge_parallel_8        1.28 K        0.78 ms    ±11.72%        0.77 ms        1.03 ms
-gauge_parallel_8            0.23 K        4.39 ms     ±1.65%        4.39 ms        4.55 ms
+fastgauge_parallel_8       21.37 K      0.0468 ms    ±29.72%      0.0457 ms      0.0600 ms
+gauge_parallel_8            0.23 K        4.31 ms     ±1.42%        4.30 ms        4.51 ms
 
 Comparison: 
-fastgauge_parallel_8        1.28 K
-gauge_parallel_8            0.23 K - 5.63x slower +3.61 ms
+fastgauge_parallel_8       21.37 K
+gauge_parallel_8            0.23 K - 92.08x slower +4.26 ms
 
 ##### With input 5. Five Tags #####
 Name                           ips        average  deviation         median         99th %
-fastgauge_parallel_8        1.05 K        0.95 ms    ±25.86%        0.92 ms        1.49 ms
-gauge_parallel_8            0.23 K        4.42 ms     ±1.97%        4.39 ms        4.61 ms
+fastgauge_parallel_8       12.57 K      0.0796 ms    ±11.61%      0.0770 ms       0.118 ms
+gauge_parallel_8            0.23 K        4.32 ms     ±1.28%        4.31 ms        4.48 ms
 
 Comparison: 
-fastgauge_parallel_8        1.05 K
-gauge_parallel_8            0.23 K - 4.65x slower +3.47 ms
+fastgauge_parallel_8       12.57 K
+gauge_parallel_8            0.23 K - 54.34x slower +4.24 ms
 
 ##### With input 6. Ten Tags #####
 Name                           ips        average  deviation         median         99th %
-fastgauge_parallel_8        822.55        1.22 ms    ±48.39%        1.12 ms        5.64 ms
-gauge_parallel_8            217.48        4.60 ms     ±5.36%        4.56 ms        5.55 ms
+fastgauge_parallel_8        7.56 K       0.132 ms    ±17.93%       0.126 ms        0.25 ms
+gauge_parallel_8            0.23 K        4.39 ms     ±2.68%        4.36 ms        4.85 ms
 
 Comparison: 
-fastgauge_parallel_8        822.55
-gauge_parallel_8            217.48 - 3.78x slower +3.38 ms
+fastgauge_parallel_8        7.56 K
+gauge_parallel_8            0.23 K - 33.17x slower +4.25 ms
 Suite saved in external term format at bench/results/fast_gauge/parallel_8.benchee
 
-Benchee output comparing tab2list with foldl:
+
+Benchee output comparing one ETS table vs one ETS table per scheduler:
 =========================================================================================================
-Generated instruments app
-Operating System: Linux
-CPU Information: Intel(R) Xeon(R) CPU @ 3.10GHz
-Number of Available Cores: 16
-Available memory: 62.79 GB
-Elixir 1.15.5
-Erlang 25.3.2.7
-JIT enabled: true
-
-Benchmark suite executing with the following configuration:
-warmup: 2 s
-time: 5 s
-memory time: 0 ns
-reduction time: 0 ns
-parallel: 1
-inputs: 1. No Options, 2. No Tags, 3. Empty Tags, 4. One Tag, 5. Five Tags, 6. Ten Tags
-Estimated total run time: 2 min 6 s
-
-Benchmarking fastgauge_foldl_non_parallel with input 1. No Options ...
-Benchmarking fastgauge_foldl_non_parallel with input 2. No Tags ...
-Benchmarking fastgauge_foldl_non_parallel with input 3. Empty Tags ...
-Benchmarking fastgauge_foldl_non_parallel with input 4. One Tag ...
-Benchmarking fastgauge_foldl_non_parallel with input 5. Five Tags ...
-Benchmarking fastgauge_foldl_non_parallel with input 6. Ten Tags ...
-Benchmarking fastgauge_tab2list_non_parallel with input 1. No Options ...
-Benchmarking fastgauge_tab2list_non_parallel with input 2. No Tags ...
-Benchmarking fastgauge_tab2list_non_parallel with input 3. Empty Tags ...
-Benchmarking fastgauge_tab2list_non_parallel with input 4. One Tag ...
-Benchmarking fastgauge_tab2list_non_parallel with input 5. Five Tags ...
-Benchmarking fastgauge_tab2list_non_parallel with input 6. Ten Tags ...
-Benchmarking gauge_non_parallel with input 1. No Options ...
-Benchmarking gauge_non_parallel with input 2. No Tags ...
-Benchmarking gauge_non_parallel with input 3. Empty Tags ...
-Benchmarking gauge_non_parallel with input 4. One Tag ...
-Benchmarking gauge_non_parallel with input 5. Five Tags ...
-Benchmarking gauge_non_parallel with input 6. Ten Tags ...
-Calculating statistics...
-Formatting results...
-
-##### With input 1. No Options #####
-Name                                      ips        average  deviation         median         99th %
-fastgauge_tab2list_non_parallel       51.61 K       19.38 μs    ±29.58%       19.02 μs       24.69 μs
-fastgauge_foldl_non_parallel          51.38 K       19.46 μs    ±30.89%       19.05 μs       26.00 μs
-gauge_non_parallel                     1.50 K      664.85 μs     ±1.33%      664.96 μs      687.77 μs
-
-Comparison: 
-fastgauge_tab2list_non_parallel       51.61 K
-fastgauge_foldl_non_parallel          51.38 K - 1.00x slower +0.0854 μs
-gauge_non_parallel                     1.50 K - 34.31x slower +645.47 μs
-
-##### With input 2. No Tags #####
-Name                                      ips        average  deviation         median         99th %
-fastgauge_foldl_non_parallel          36.74 K       27.22 μs    ±25.27%       26.70 μs       32.93 μs
-fastgauge_tab2list_non_parallel       36.52 K       27.38 μs    ±25.24%       26.92 μs       32.62 μs
-gauge_non_parallel                     1.46 K      685.79 μs     ±1.64%      685.41 μs      711.28 μs
-
-Comparison: 
-fastgauge_foldl_non_parallel          36.74 K
-fastgauge_tab2list_non_parallel       36.52 K - 1.01x slower +0.160 μs
-gauge_non_parallel                     1.46 K - 25.19x slower +658.57 μs
-
-##### With input 3. Empty Tags #####
-Name                                      ips        average  deviation         median         99th %
-fastgauge_foldl_non_parallel          31.68 K       31.56 μs     ±7.39%       31.01 μs       37.75 μs
-fastgauge_tab2list_non_parallel       31.51 K       31.74 μs     ±6.65%       31.27 μs       37.25 μs
-gauge_non_parallel                     1.45 K      690.05 μs     ±2.13%      689.40 μs      725.14 μs
-
-Comparison: 
-fastgauge_foldl_non_parallel          31.68 K
-fastgauge_tab2list_non_parallel       31.51 K - 1.01x slower +0.175 μs
-gauge_non_parallel                     1.45 K - 21.86x slower +658.49 μs
-
-##### With input 4. One Tag #####
-Name                                      ips        average  deviation         median         99th %
-fastgauge_foldl_non_parallel          27.73 K       36.07 μs     ±9.94%       35.46 μs       42.36 μs
-fastgauge_tab2list_non_parallel       27.57 K       36.27 μs     ±7.13%       35.73 μs       44.08 μs
-gauge_non_parallel                     1.40 K      712.86 μs     ±3.35%      711.16 μs      768.63 μs
-
-Comparison: 
-fastgauge_foldl_non_parallel          27.73 K
-fastgauge_tab2list_non_parallel       27.57 K - 1.01x slower +0.20 μs
-gauge_non_parallel                     1.40 K - 19.77x slower +676.79 μs
-
-##### With input 5. Five Tags #####
-Name                                      ips        average  deviation         median         99th %
-fastgauge_tab2list_non_parallel       15.21 K       65.77 μs     ±8.16%       64.90 μs       75.12 μs
-fastgauge_foldl_non_parallel          15.15 K       66.02 μs     ±7.35%       65.09 μs       73.70 μs
-gauge_non_parallel                     1.34 K      744.27 μs     ±1.48%      743.90 μs      772.30 μs
-
-Comparison: 
-fastgauge_tab2list_non_parallel       15.21 K
-fastgauge_foldl_non_parallel          15.15 K - 1.00x slower +0.26 μs
-gauge_non_parallel                     1.34 K - 11.32x slower +678.50 μs
-
-##### With input 6. Ten Tags #####
-Name                                      ips        average  deviation         median         99th %
-fastgauge_tab2list_non_parallel        8.95 K      111.69 μs     ±4.28%      110.45 μs      121.88 μs
-fastgauge_foldl_non_parallel           8.92 K      112.15 μs     ±5.72%      110.61 μs      122.60 μs
-gauge_non_parallel                     1.28 K      783.59 μs     ±1.39%      782.58 μs      819.32 μs
-
-Comparison: 
-fastgauge_tab2list_non_parallel        8.95 K
-fastgauge_foldl_non_parallel           8.92 K - 1.00x slower +0.45 μs
-gauge_non_parallel                     1.28 K - 7.02x slower +671.90 μs
-Suite saved in external term format at bench/results/fast_gauge/non_parallel.benchee
 Operating System: Linux
 CPU Information: Intel(R) Xeon(R) CPU @ 3.10GHz
 Number of Available Cores: 16
@@ -307,18 +197,18 @@ parallel: 8
 inputs: 1. No Options, 2. No Tags, 3. Empty Tags, 4. One Tag, 5. Five Tags, 6. Ten Tags
 Estimated total run time: 2 min 6 s
 
-Benchmarking fastgauge_foldl_parallel_8 with input 1. No Options ...
-Benchmarking fastgauge_foldl_parallel_8 with input 2. No Tags ...
-Benchmarking fastgauge_foldl_parallel_8 with input 3. Empty Tags ...
-Benchmarking fastgauge_foldl_parallel_8 with input 4. One Tag ...
-Benchmarking fastgauge_foldl_parallel_8 with input 5. Five Tags ...
-Benchmarking fastgauge_foldl_parallel_8 with input 6. Ten Tags ...
-Benchmarking fastgauge_tab2list_parallel_8 with input 1. No Options ...
-Benchmarking fastgauge_tab2list_parallel_8 with input 2. No Tags ...
-Benchmarking fastgauge_tab2list_parallel_8 with input 3. Empty Tags ...
-Benchmarking fastgauge_tab2list_parallel_8 with input 4. One Tag ...
-Benchmarking fastgauge_tab2list_parallel_8 with input 5. Five Tags ...
-Benchmarking fastgauge_tab2list_parallel_8 with input 6. Ten Tags ...
+Benchmarking fastgauge_multitable_parallel_8 with input 1. No Options ...
+Benchmarking fastgauge_multitable_parallel_8 with input 2. No Tags ...
+Benchmarking fastgauge_multitable_parallel_8 with input 3. Empty Tags ...
+Benchmarking fastgauge_multitable_parallel_8 with input 4. One Tag ...
+Benchmarking fastgauge_multitable_parallel_8 with input 5. Five Tags ...
+Benchmarking fastgauge_multitable_parallel_8 with input 6. Ten Tags ...
+Benchmarking fastgauge_parallel_8 with input 1. No Options ...
+Benchmarking fastgauge_parallel_8 with input 2. No Tags ...
+Benchmarking fastgauge_parallel_8 with input 3. Empty Tags ...
+Benchmarking fastgauge_parallel_8 with input 4. One Tag ...
+Benchmarking fastgauge_parallel_8 with input 5. Five Tags ...
+Benchmarking fastgauge_parallel_8 with input 6. Ten Tags ...
 Benchmarking gauge_parallel_8 with input 1. No Options ...
 Benchmarking gauge_parallel_8 with input 2. No Tags ...
 Benchmarking gauge_parallel_8 with input 3. Empty Tags ...
@@ -329,67 +219,68 @@ Calculating statistics...
 Formatting results...
 
 ##### With input 1. No Options #####
-Name                                    ips        average  deviation         median         99th %
-fastgauge_tab2list_parallel_8        1.64 K      610.90 μs    ±11.35%      603.74 μs      777.25 μs
-fastgauge_foldl_parallel_8           1.51 K      662.28 μs     ±9.06%      657.35 μs      822.70 μs
-gauge_parallel_8                     0.21 K     4846.45 μs    ±10.36%     4485.73 μs     5732.13 μs
+Name                                      ips        average  deviation         median         99th %
+fastgauge_multitable_parallel_8       33.45 K       29.90 μs    ±32.16%       29.20 μs       39.18 μs
+fastgauge_parallel_8                   1.52 K      658.56 μs     ±7.48%      656.00 μs      772.47 μs
+gauge_parallel_8                       0.23 K     4380.56 μs     ±5.49%     4311.94 μs     5607.94 μs
 
 Comparison: 
-fastgauge_tab2list_parallel_8        1.64 K
-fastgauge_foldl_parallel_8           1.51 K - 1.08x slower +51.39 μs
-gauge_parallel_8                     0.21 K - 7.93x slower +4235.56 μs
+fastgauge_multitable_parallel_8       33.45 K
+fastgauge_parallel_8                   1.52 K - 22.03x slower +628.66 μs
+gauge_parallel_8                       0.23 K - 146.52x slower +4350.66 μs
 
 ##### With input 2. No Tags #####
-Name                                    ips        average  deviation         median         99th %
-fastgauge_tab2list_parallel_8        1.49 K      669.37 μs     ±8.96%      664.49 μs      818.14 μs
-fastgauge_foldl_parallel_8           1.44 K      692.95 μs     ±8.97%      687.71 μs      840.77 μs
-gauge_parallel_8                     0.20 K     4930.80 μs    ±10.16%     4550.13 μs     5728.64 μs
+Name                                      ips        average  deviation         median         99th %
+fastgauge_multitable_parallel_8       26.01 K       38.44 μs    ±17.78%       37.43 μs       49.91 μs
+fastgauge_parallel_8                   1.41 K      707.61 μs    ±11.25%      702.61 μs      826.31 μs
+gauge_parallel_8                       0.23 K     4341.18 μs     ±2.04%     4292.52 μs     4537.77 μs
 
 Comparison: 
-fastgauge_tab2list_parallel_8        1.49 K
-fastgauge_foldl_parallel_8           1.44 K - 1.04x slower +23.58 μs
-gauge_parallel_8                     0.20 K - 7.37x slower +4261.43 μs
+fastgauge_multitable_parallel_8       26.01 K
+fastgauge_parallel_8                   1.41 K - 18.41x slower +669.17 μs
+gauge_parallel_8                       0.23 K - 112.93x slower +4302.74 μs
 
 ##### With input 3. Empty Tags #####
-Name                                    ips        average  deviation         median         99th %
-fastgauge_tab2list_parallel_8        1.43 K      700.53 μs     ±9.36%      694.25 μs      853.62 μs
-fastgauge_foldl_parallel_8           1.32 K      759.60 μs    ±12.90%      753.50 μs      898.22 μs
-gauge_parallel_8                     0.21 K     4819.89 μs    ±10.55%     4505.56 μs     5760.61 μs
+Name                                      ips        average  deviation         median         99th %
+fastgauge_multitable_parallel_8       23.86 K       41.92 μs    ±15.20%       41.41 μs       52.07 μs
+fastgauge_parallel_8                   1.36 K      737.82 μs    ±26.06%      704.00 μs     1713.14 μs
+gauge_parallel_8                       0.23 K     4400.16 μs     ±2.25%     4437.52 μs     4609.30 μs
 
 Comparison: 
-fastgauge_tab2list_parallel_8        1.43 K
-fastgauge_foldl_parallel_8           1.32 K - 1.08x slower +59.08 μs
-gauge_parallel_8                     0.21 K - 6.88x slower +4119.36 μs
+fastgauge_multitable_parallel_8       23.86 K
+fastgauge_parallel_8                   1.36 K - 17.60x slower +695.90 μs
+gauge_parallel_8                       0.23 K - 104.97x slower +4358.24 μs
 
 ##### With input 4. One Tag #####
-Name                                    ips        average  deviation         median         99th %
-fastgauge_tab2list_parallel_8        1.38 K      723.94 μs     ±9.49%      717.70 μs      867.03 μs
-fastgauge_foldl_parallel_8           1.26 K      792.21 μs    ±10.76%      787.29 μs      897.21 μs
-gauge_parallel_8                     0.21 K     4780.28 μs    ±10.26%     4477.85 μs     5640.39 μs
+Name                                      ips        average  deviation         median         99th %
+fastgauge_multitable_parallel_8       21.60 K       46.29 μs    ±16.51%       45.78 μs       56.20 μs
+fastgauge_parallel_8                   1.32 K      756.86 μs     ±8.59%      751.72 μs      887.25 μs
+gauge_parallel_8                       0.23 K     4380.75 μs     ±2.10%     4338.55 μs     4613.73 μs
 
 Comparison: 
-fastgauge_tab2list_parallel_8        1.38 K
-fastgauge_foldl_parallel_8           1.26 K - 1.09x slower +68.27 μs
-gauge_parallel_8                     0.21 K - 6.60x slower +4056.35 μs
+fastgauge_multitable_parallel_8       21.60 K
+fastgauge_parallel_8                   1.32 K - 16.35x slower +710.57 μs
+gauge_parallel_8                       0.23 K - 94.63x slower +4334.45 μs
 
 ##### With input 5. Five Tags #####
-Name                                    ips        average  deviation         median         99th %
-fastgauge_foldl_parallel_8           1.08 K      929.77 μs    ±15.99%      910.79 μs     1202.40 μs
-fastgauge_tab2list_parallel_8        1.05 K      954.26 μs    ±33.55%      915.73 μs     2400.46 μs
-gauge_parallel_8                     0.20 K     4915.93 μs    ±10.56%     4544.87 μs     5666.48 μs
+Name                                      ips        average  deviation         median         99th %
+fastgauge_multitable_parallel_8       12.63 K       79.17 μs    ±14.96%       76.39 μs      136.93 μs
+fastgauge_parallel_8                   1.01 K      993.15 μs    ±30.14%      961.91 μs     1721.61 μs
+gauge_parallel_8                       0.23 K     4385.09 μs     ±2.42%     4334.29 μs     4610.62 μs
 
 Comparison: 
-fastgauge_foldl_parallel_8           1.08 K
-fastgauge_tab2list_parallel_8        1.05 K - 1.03x slower +24.48 μs
-gauge_parallel_8                     0.20 K - 5.29x slower +3986.16 μs
+fastgauge_multitable_parallel_8       12.63 K
+fastgauge_parallel_8                   1.01 K - 12.54x slower +913.98 μs
+gauge_parallel_8                       0.23 K - 55.39x slower +4305.91 μs
 
 ##### With input 6. Ten Tags #####
-Name                                    ips        average  deviation         median         99th %
-fastgauge_foldl_parallel_8           857.81        1.17 ms    ±43.89%        1.09 ms        4.95 ms
-fastgauge_tab2list_parallel_8        820.53        1.22 ms    ±50.75%        1.11 ms        5.65 ms
-gauge_parallel_8                     208.48        4.80 ms    ±10.61%        4.53 ms        5.81 ms
+Name                                      ips        average  deviation         median         99th %
+fastgauge_multitable_parallel_8       7930.74       0.126 ms    ±11.33%       0.123 ms       0.198 ms
+fastgauge_parallel_8                   806.44        1.24 ms    ±48.83%        1.11 ms        5.55 ms
+gauge_parallel_8                       226.29        4.42 ms     ±2.60%        4.37 ms        4.79 ms
 
 Comparison: 
-fastgauge_foldl_parallel_8           857.81
-fastgauge_tab2list_parallel_8        820.53 - 1.05x slower +0.0530 ms
-gauge_parallel_8                     208.48 - 4.11x slower +3.63 ms
+fastgauge_multitable_parallel_8       7930.74
+fastgauge_parallel_8                   806.44 - 9.83x slower +1.11 ms
+gauge_parallel_8                       226.29 - 35.05x slower +4.29 ms
+Suite saved in external term format at bench/results/fast_gauge/parallel_8.benchee
