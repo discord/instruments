@@ -58,21 +58,20 @@ defmodule Instruments.FastGauge do
     1..table_count
     |> Enum.map(fn scheduler_id -> table_name(scheduler_id) end)
     |> Enum.reduce(%{}, fn table_name, acc ->
-      table_results = table_name
+      table_results =
+        table_name
         |> :ets.tab2list()
         |> Map.new()
 
-      Enum.each(table_results, & :ets.delete_object(table_name, &1))
+      Enum.each(table_results, &:ets.delete_object(table_name, &1))
 
       Map.merge(acc, table_results, fn _key, table_entry_old, table_entry_new ->
         latest_table_entry(table_entry_old, table_entry_new)
       end)
     end)
-    |> Enum.each(
-      fn {table_key, {value, _recorded_timestamp}} ->
-        report_stat({table_key, value}, reporter_module)
-      end
-    )
+    |> Enum.each(fn {table_key, {value, _recorded_timestamp}} ->
+      report_stat({table_key, value}, reporter_module)
+    end)
 
     schedule_report()
     {:noreply, state}
@@ -104,11 +103,15 @@ defmodule Instruments.FastGauge do
   end
 
   @spec latest_table_entry(table_entry(), table_entry()) :: table_entry()
-  defp latest_table_entry({_gauge_value_1, recorded_timestamp_1} = entry_1, {_gauge_value_2, recorded_timestamp_2}) when recorded_timestamp_1 > recorded_timestamp_2 do
+  defp latest_table_entry(
+         {_gauge_value_left, recorded_timestamp_left} = left,
+         {_gauge_value_right, recorded_timestamp_right}
+       )
+       when recorded_timestamp_left > recorded_timestamp_right do
     entry_1
   end
 
-  defp latest_table_entry(_entry_1, entry_2) do
+  defp latest_table_entry(_left, right) do
     entry_2
   end
 
