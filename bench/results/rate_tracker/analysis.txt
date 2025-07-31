@@ -1,0 +1,79 @@
+The "multitable" results represent results with one table per scheduler.
+
+##### With input 1. No Options #####
+Name                                                             ips        average  deviation         median         99th %
+track_non_parallel (2025-7-30--19-7-52-utc)                  57.02 K       17.54 μs    ±40.55%       16.40 μs       29.50 μs
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       54.03 K       18.51 μs    ±40.31%       17.50 μs       30.85 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        44.47 K       22.49 μs    ±46.10%       18.66 μs       39.27 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.23 K      809.92 μs    ±10.42%      801.34 μs     1112.69 μs
+
+Comparison:
+track_non_parallel (2025-7-30--19-7-52-utc)                  57.02 K
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       54.03 K - 1.06x slower +0.97 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        44.47 K - 1.28x slower +4.95 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.23 K - 46.18x slower +792.38 μs
+
+##### With input 2. No Tags #####
+Name                                                             ips        average  deviation         median         99th %
+track_non_parallel (2025-7-30--19-7-52-utc)                  42.16 K       23.72 μs    ±38.69%       21.62 μs       40.88 μs
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       41.70 K       23.98 μs    ±34.79%       22.63 μs       39.77 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        32.58 K       30.69 μs    ±37.52%       25.34 μs       49.99 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.24 K      806.80 μs     ±7.80%      800.37 μs     1029.23 μs
+
+Comparison:
+track_non_parallel (2025-7-30--19-7-52-utc)                  42.16 K
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       41.70 K - 1.01x slower +0.26 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        32.58 K - 1.29x slower +6.97 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.24 K - 34.02x slower +783.08 μs
+
+##### With input 3. Empty Tags #####
+Name                                                             ips        average  deviation         median         99th %
+track_non_parallel (2025-7-30--19-7-52-utc)                  37.38 K       26.75 μs    ±37.74%       24.10 μs       46.37 μs
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       36.71 K       27.24 μs    ±38.85%       25.29 μs       47.26 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        27.42 K       36.47 μs   ±140.98%       31.97 μs       57.37 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.18 K      846.45 μs    ±22.48%      819.76 μs     1504.00 μs
+
+Comparison:
+track_non_parallel (2025-7-30--19-7-52-utc)                  37.38 K
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       36.71 K - 1.02x slower +0.49 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        27.42 K - 1.36x slower +9.71 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.18 K - 31.64x slower +819.69 μs
+
+##### With input 4. One Tag #####
+Name                                                             ips        average  deviation         median         99th %
+track_non_parallel (2025-7-30--19-7-52-utc)                  35.04 K       28.54 μs    ±33.51%       26.81 μs       47.81 μs
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       33.96 K       29.44 μs    ±31.72%       27.91 μs       49.09 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        28.08 K       35.61 μs    ±37.16%       28.55 μs       60.68 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.24 K      806.46 μs    ±11.67%      796.09 μs     1200.90 μs
+
+Comparison:
+track_non_parallel (2025-7-30--19-7-52-utc)                  35.04 K
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       33.96 K - 1.03x slower +0.90 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        28.08 K - 1.25x slower +7.07 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     1.24 K - 28.26x slower +777.92 μs
+
+##### With input 5. Five Tags #####
+Name                                                             ips        average  deviation         median         99th %
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       18.28 K       54.71 μs    ±14.59%       51.88 μs       94.28 μs
+track_non_parallel (2025-7-30--19-7-52-utc)                  17.64 K       56.68 μs    ±21.84%       51.38 μs      101.40 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        13.77 K       72.61 μs    ±84.96%       58.31 μs      118.09 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     0.91 K     1096.18 μs    ±56.20%      968.22 μs     3851.55 μs
+
+Comparison:
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       18.28 K
+track_non_parallel (2025-7-30--19-7-52-utc)                  17.64 K - 1.04x slower +1.97 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)        13.77 K - 1.33x slower +17.90 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     0.91 K - 20.04x slower +1041.47 μs
+
+##### With input 6. Ten Tags #####
+Name                                                             ips        average  deviation         median         99th %
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       10.45 K       95.65 μs    ±14.43%       91.08 μs      171.52 μs
+track_non_parallel (2025-7-30--19-7-52-utc)                  10.41 K       96.10 μs    ±17.22%       90.35 μs      173.25 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)         9.16 K      109.22 μs    ±28.10%       94.04 μs      193.71 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     0.89 K     1125.36 μs     ±9.38%     1105.57 μs     1502.48 μs
+
+Comparison:
+track_non_parallel_multitable (2025-7-30--19-57-8-utc)       10.45 K
+track_non_parallel (2025-7-30--19-7-52-utc)                  10.41 K - 1.00x slower +0.46 μs
+track_parallel_8_multitable (2025-7-30--19-57-50-utc)         9.16 K - 1.14x slower +13.57 μs
+track_parallel_8 (2025-7-30--19-8-35-utc)                     0.89 K - 11.77x slower +1029.71 μs

@@ -1,13 +1,18 @@
 defmodule Instruments.MacroHelpers do
   @moduledoc false
 
+  alias Instruments.RateTracker
+
   @safe_metric_types [:increment, :decrement, :gauge, :event, :set]
+
+  @metrics_module Application.get_env(:instruments, :reporter_module, Instruments.Statix)
 
   def build_metric_macro(:measure, caller, metrics_module, key_ast, options_ast, function) do
     key = to_iolist(key_ast, caller)
 
     quote do
       safe_opts = unquote(to_safe_options(:measure, options_ast))
+      Instruments.MacroHelpers.maybe_track(unquote(key), unquote(metrics_module), safe_opts)
       unquote(metrics_module).measure(unquote(key), safe_opts, unquote(function))
     end
   end
@@ -17,6 +22,7 @@ defmodule Instruments.MacroHelpers do
 
     quote do
       safe_opts = unquote(to_safe_options(type, options_ast))
+      Instruments.MacroHelpers.maybe_track(unquote(key), unquote(metrics_module), safe_opts)
       unquote(metrics_module).unquote(type)(unquote(key), unquote(value_ast), safe_opts)
     end
   end
@@ -49,6 +55,15 @@ defmodule Instruments.MacroHelpers do
     {_t, iolist} = Macro.postwalk(metric, [], &parse_iolist/2)
 
     Enum.reverse(iolist)
+  end
+
+  # Track if we're using a non-Fast* module.
+  def maybe_track(key, @metrics_module, opts) do
+    RateTracker.track(key, opts)
+  end
+
+  def maybe_track(_key, _module, _opts) do
+    :ok
   end
 
   # Parses string literals
