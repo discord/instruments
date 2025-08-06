@@ -92,7 +92,7 @@ defmodule Instruments.RateTracker do
   @doc """
   Dump the currently tracked rates
   """
-  @spec dump_rates() :: [{{String.t(), Keyword.t()}, non_neg_integer() | :infinity}]
+  @spec dump_rates() :: [{{String.t(), Keyword.t()}, non_neg_integer()}]
   def dump_rates() do
     GenServer.call(__MODULE__, :dump_rates)
   end
@@ -101,24 +101,7 @@ defmodule Instruments.RateTracker do
 
   def handle_call(:dump_rates, _from, %__MODULE__{} = state) do
     time_since_report = time() - state.last_update_time
-
-    rates = 1..state.table_count
-    |> Enum.flat_map(fn scheduler_id ->
-      scheduler_id
-      |> table_name()
-      |> :ets.tab2list()
-    end)
-    |> aggregate_stats()
-    |> Enum.filter(fn
-      {_key, 0} -> false
-      {_key, _rate} -> true
-    end)
-    |> Enum.map(fn 
-      {key, _count} when time_since_report == 0 -> {key, :infinity}
-      {key, count} -> {key, count / time_since_report}
-    end)
-    |> Enum.to_list()
-
+    rates = do_dump_rates(state, time_since_report)
     {:reply, rates, state}
   end
 
@@ -145,6 +128,28 @@ defmodule Instruments.RateTracker do
   end
 
   ## Private
+
+  defp do_dump_rates(_state, 0) do
+    []
+  end
+
+  defp do_dump_rates(state, time_since_report) do
+    1..state.table_count
+    |> Enum.flat_map(fn scheduler_id ->
+      scheduler_id
+      |> table_name()
+      |> :ets.tab2list()
+    end)
+    |> aggregate_stats()
+    |> Enum.filter(fn
+      {_key, 0} -> false
+      {_key, _rate} -> true
+    end)
+    |> Enum.map(fn {key, count} ->
+      {key, count / time_since_report}
+    end)
+    |> Enum.to_list()
+  end
 
   defp get_table_key(name, []) do
     {name, []}
