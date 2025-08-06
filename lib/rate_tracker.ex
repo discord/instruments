@@ -107,6 +107,10 @@ defmodule Instruments.RateTracker do
       {_key, 0} -> false
       {_key, _rate} -> true
     end)
+    |> Enum.map(fn {key, count} ->
+      report_interval_seconds = @report_interval_ms / 1000
+      {key, count / report_interval_seconds}
+    end)
     |> Enum.to_list()
   end
 
