@@ -92,11 +92,17 @@ defmodule Instruments.RateTracker do
   @doc """
   Dump the currently tracked rates
   """
-  @spec dump_rates() :: [{{String.t(), Keyword.t()}, non_neg_integer()}]
+  @spec dump_rates() :: [{{String.t(), Keyword.t()}, non_neg_integer() | :infinity}]
   def dump_rates() do
-    table_count = :erlang.system_info(:schedulers)
+    GenServer.call(__MODULE__, :dump_rates)
+  end
 
-    1..table_count
+  ## GenServer callbacks
+
+  def handle_call(:dump_rates, _from, %__MODULE__{} = state) do
+    time_since_report = time() - state.last_update_time
+
+    rates = 1..state.table_count
     |> Enum.flat_map(fn scheduler_id ->
       scheduler_id
       |> table_name()
@@ -107,14 +113,14 @@ defmodule Instruments.RateTracker do
       {_key, 0} -> false
       {_key, _rate} -> true
     end)
-    |> Enum.map(fn {key, count} ->
-      report_interval_seconds = @report_interval_ms / 1000
-      {key, count / report_interval_seconds}
+    |> Enum.map(fn 
+      {key, _count} when time_since_report == 0 -> {key, :infinity}
+      {key, count} -> {key, count / time_since_report}
     end)
     |> Enum.to_list()
-  end
 
-  ## GenServer callbacks
+    {:reply, rates, state}
+  end
 
   def handle_cast({:subscribe, callback}, %__MODULE__{} = state) do
     state = %__MODULE__{state | callbacks: [callback | state.callbacks]}
