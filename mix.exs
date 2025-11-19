@@ -51,7 +51,7 @@ defmodule Instruments.Mixfile do
       {:benchee, "~> 1.4", only: :dev},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:recon, "~> 2.5.2"},
-      {:statix, github: "discord/statix", ref: "ca65308681bfece1de12e4156aa1cf1e4a512e59"},
+      {:statix, "~> 1.5.1", hex: :discord_statix},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false}
     ]
   end
