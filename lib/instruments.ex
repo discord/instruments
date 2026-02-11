@@ -58,7 +58,6 @@ defmodule Instruments do
   require Logger
 
   @metrics_module Application.get_env(:instruments, :reporter_module, Instruments.Statix)
-  @statsd_host Application.get_env(:instruments, :statsd_host, "localhost")
   @statsd_port Application.get_env(:instruments, :statsd_port, 8125)
 
   defmacro __using__(_opts) do
@@ -68,7 +67,11 @@ defmodule Instruments do
   end
 
   @doc false
-  def statsd_host(), do: @statsd_host |> String.to_charlist()
+  def statsd_host do
+    :instruments
+    |> Application.get_env(:statsd_host, "localhost")
+    |> String.to_charlist()
+  end
 
   @doc false
   def statsd_port(), do: @statsd_port
