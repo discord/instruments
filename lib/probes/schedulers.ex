@@ -10,8 +10,13 @@ defmodule Instruments.Probes.Schedulers do
 
   This module reports Erlang's internal view of its scheduler utilization and is
   a better gauge of how loaded your system is. It reports two values, the total
-  utilization, and a [weighted utilization](http://erlang.org/doc/man/erlang.html#statistics_scheduler_wall_time),
-  which can be used as a proxy for CPU usage.
+  utilization, and a [weighted
+  utilization](http://erlang.org/doc/man/erlang.html#statistics_scheduler_wall_time),
+  which can be used as a proxy for CPU usage. Weighted utilization is calculated
+  based on the number of logical CPUs available, but in containerized
+  environments, the number of CPUs available may differ from what erlang
+  reports. In these cases, you can override the count by configuring
+  `num_logical_processors_override` on the `instruments` application.
 
   To use this probe, add the following function somewhwere in your application's
   initialization:
@@ -104,6 +109,16 @@ defmodule Instruments.Probes.Schedulers do
   end
 
   defp logical_processor_count() do
+    case Application.fetch_env(:instruments, :num_logical_processors_override) do
+      {:ok, override} when is_integer(override) ->
+        override
+
+      :error ->
+        actual_logical_processor_count()
+    end
+  end
+
+  defp actual_logical_processor_count() do
     case :erlang.system_info(:logical_processors_available) do
       :unknown ->
         :erlang.system_info(:logical_processors_online)
