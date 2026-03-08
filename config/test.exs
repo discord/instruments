@@ -3,6 +3,7 @@ use Mix.Config
 # setting the statsd port to something other than the default
 # in test so we don't conflict in the build env.
 config :instruments,
+  statsd_host: "localhost",
   statsd_port: 15310,
   fast_counter_report_interval: 10,
   fast_counter_report_jitter_range: 0..0,

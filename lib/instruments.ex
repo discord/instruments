@@ -67,6 +67,13 @@ defmodule Instruments do
   end
 
   @doc false
+  def statsd_host do
+    :instruments
+    |> Application.get_env(:statsd_host, "localhost")
+    |> String.to_charlist()
+  end
+
+  @doc false
   def statsd_port(), do: @statsd_port
 
   # metrics macros
@@ -203,7 +210,7 @@ defmodule Instruments do
       # this will have to be changed.
       unquote(@metrics_module)
       |> Process.whereis()
-      |> :gen_udp.send('localhost', Instruments.statsd_port(), message)
+      |> :gen_udp.send(Instruments.statsd_host(), Instruments.statsd_port(), message)
     end
   end
 
