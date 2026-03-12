@@ -52,4 +52,11 @@ defmodule Instruments.StatsReporter do
   Write the value into the set defined by `key`
   """
   @callback set(key, integer, keyword) :: stats_return
+
+  @doc """
+  Send a DataDog event with the given title and text
+  """
+  @callback send_event(title :: iodata, text :: iodata, keyword) :: stats_return
+
+  @optional_callbacks [send_event: 3]
 end
