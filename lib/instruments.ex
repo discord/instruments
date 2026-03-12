@@ -175,35 +175,7 @@ defmodule Instruments do
     title_iodata = MacroHelpers.to_iolist(title_ast, __CALLER__)
 
     quote do
-      title = unquote(title_iodata)
-
-      header = [
-        "_e{",
-        Integer.to_charlist(IO.iodata_length(title)),
-        ",",
-        Integer.to_charlist(IO.iodata_length(unquote(text))),
-        "}:",
-        title,
-        "|",
-        unquote(text)
-      ]
-
-      message =
-        case Keyword.get(unquote(opts), :tags) do
-          nil ->
-            header
-
-          tag_list ->
-            [header, "|#", Enum.intersperse(tag_list, ",")]
-        end
-
-      # Statix registers a port to the name of the metrics module.
-      # and this code assumes that the metrics module is bound to
-      # a port, and sends directly to it. If we move off of Statix,
-      # this will have to be changed.
-      unquote(@metrics_module)
-      |> Process.whereis()
-      |> :gen_udp.send('localhost', Instruments.statsd_port(), message)
+      unquote(@metrics_module).send_event(unquote(title_iodata), unquote(text), unquote(opts))
     end
   end
 

@@ -28,4 +28,7 @@ defmodule Instruments.StatsReporter.Null do
 
   @doc false
   def set(_key, _value, _options \\ []), do: :ok
+
+  @doc false
+  def send_event(_title, _text, _options \\ []), do: :ok
 end
