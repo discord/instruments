@@ -238,6 +238,20 @@ defmodule Instruments do
         report_interval: report_interval
       )
 
+      Probe.define!(
+        "recon.alloc.allocated",
+        :gauge,
+        module: Probes.Allocators,
+        keys: ~w(
+          by_allocator
+          mseg_alloc_carriers_size
+          sys_alloc_carriers_size
+          mseg_alloc_carriers
+          sys_alloc_carriers
+        )a,
+        report_interval: report_interval
+      )
+
       cond do
         # The supercarrier is part of mseg_alloc (the flags are all under +MMsc*, where the second "M" refers to `mseg_alloc`)
         # https://www.erlang.org/doc/apps/erts/erts_alloc.html
