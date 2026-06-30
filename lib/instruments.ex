@@ -244,10 +244,8 @@ defmodule Instruments do
         module: Probes.Allocators,
         keys: ~w(
           by_allocator
-          mseg_alloc_carriers_size
-          sys_alloc_carriers_size
-          mseg_alloc_carriers
-          sys_alloc_carriers
+          backing_carriers
+          backing_carriers_size
         )a,
         report_interval: report_interval
       )
@@ -260,24 +258,29 @@ defmodule Instruments do
             function: fn ->
               erts_mmap_info = :erlang.system_info({:allocator, :erts_mmap})
 
-              get_in(erts_mmap_info, [:default_mmap, :supercarrier, :sizes]) || [total: 0, used: 0]
+              get_in(erts_mmap_info, [:default_mmap, :supercarrier, :sizes]) ||
+                [total: 0, used: 0]
             end,
             keys: ~w(total used)a,
             report_interval: report_interval
           )
 
         Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) ->
-          Logger.warn("[Instruments] not collecting memory metrics because :mseg_alloc is not enabled")
+          Logger.warn(
+            "[Instruments] not collecting memory metrics because :mseg_alloc is not enabled"
+          )
 
-        true -> :ok
+        true ->
+          :ok
       end
     rescue
       ErlangError ->
         if Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) do
-          Logger.warn("[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)")
+          Logger.warn(
+            "[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)"
+          )
         end
     end
-
 
     # process_count = current number of processes.
     # port_count = current number of ports.

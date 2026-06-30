@@ -2,15 +2,16 @@ defmodule Instruments.Probes.Allocators do
   @moduledoc """
   A probe that reports per-allocator memory statistics.
 
-  This probe reports five metrics, all derived from `:recon_alloc`:
+  This probe reports three metrics, all derived from `:recon_alloc`:
 
-    * `by_allocator`: the memory used by each allocated type, as reported by
+    * `by_allocator`: the memory allocated by each allocator, as reported by
       `:recon_alloc.memory(:allocated_types)`. A single metric is emitted per
       allocator, tagged with `allocator:<name>`.
-    * `mseg_alloc_carriers_size`, `sys_alloc_carriers_size`,
-      `mseg_alloc_carriers`, `sys_alloc_carriers`: the sum of the corresponding
-      carrier statistic across every allocator instance reported by
-      `:recon_alloc.allocators/0`.
+    * `backing_carriers`, `backing_carriers_size`: the number of carriers (and
+      their total size) allocated by each backing allocator, summed across every
+      allocator instance reported by `:recon_alloc.allocators/0`. One metric is
+      emitted per backing allocator, tagged with `allocator:<name>` (one of
+      `mseg_alloc` or `sys_alloc`).
 
   To use this probe, register it with the matching keys:
 
@@ -19,25 +20,18 @@ defmodule Instruments.Probes.Allocators do
         module: Probes.Allocators,
         keys: ~w(
           by_allocator
-          mseg_alloc_carriers_size
-          sys_alloc_carriers_size
-          mseg_alloc_carriers
-          sys_alloc_carriers
+          backing_carriers
+          backing_carriers_size
         )a
       )
 
-  All five keys are then reported under `recon.alloc.allocated.<key>`.
+  All three keys are then reported under `recon.alloc.allocated.<key>`.
   """
   alias Instruments.Probe
 
   @behaviour Probe
 
-  @carrier_stats ~w(
-    mseg_alloc_carriers_size
-    sys_alloc_carriers_size
-    mseg_alloc_carriers
-    sys_alloc_carriers
-  )a
+  @backing_allocators ~w(mseg_alloc sys_alloc)a
 
   # Probe behaviour callbacks
 
@@ -49,7 +43,7 @@ defmodule Instruments.Probes.Allocators do
 
   @doc false
   def probe_get_value(_state) do
-    {:ok, by_allocator_values() ++ carrier_sum_values()}
+    {:ok, by_allocator_values() ++ backing_carrier_values()}
   end
 
   @doc false
@@ -71,11 +65,16 @@ defmodule Instruments.Probes.Allocators do
     )
   end
 
-  defp carrier_sum_values() do
+  defp backing_carrier_values() do
     allocator_infos = Enum.map(:recon_alloc.allocators(), fn {{_name, _}, info} -> info end)
 
-    for stat_name <- @carrier_stats do
-      {stat_name, compute_sum(allocator_infos, stat_name)}
+    for backing <- @backing_allocators,
+        {key, stat_name} <- [
+          backing_carriers: :"#{backing}_carriers",
+          backing_carriers_size: :"#{backing}_carriers_size"
+        ] do
+      sum = compute_sum(allocator_infos, stat_name)
+      {key, Probe.Value.new(sum, tags: ["allocator:#{backing}"])}
     end
   end
 
