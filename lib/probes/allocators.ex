@@ -92,9 +92,9 @@ defmodule Instruments.Probes.Allocators do
   defp compute_sum(item, stat_name) do
     case item do
       {^stat_name, value} -> value
-      # Technically these last two branches aren't used for the keys in
-      # @carrier_stats, but I have left them so we can extend that list as
-      # needed.
+      # The 3-tuple branch isn't currently exercised by the keys in
+      # @backing_allocators, but it's left here so the list can be extended as
+      # needed. (The 4-tuple branch is used by the *_carriers_size stats.)
       {^stat_name, value, _} -> value
       {^stat_name, value, _, _} -> value
       _other -> 0
