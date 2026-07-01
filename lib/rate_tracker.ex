@@ -11,12 +11,12 @@ defmodule Instruments.RateTracker do
 
   @table_prefix :instruments_rate_tracker
   @max_tables 128
-  @report_interval_ms Application.get_env(
+  @report_interval_ms Application.compile_env(
                         :instruments,
                         :rate_tracker_report_interval,
                         10_000
                       )
-  @report_jitter_range_ms Application.get_env(
+  @report_jitter_range_ms Application.compile_env(
                             :instruments,
                             :rate_tracker_report_jitter_range,
                             -500..500

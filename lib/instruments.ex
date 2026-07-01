@@ -57,8 +57,8 @@ defmodule Instruments do
 
   require Logger
 
-  @metrics_module Application.get_env(:instruments, :reporter_module, Instruments.Statix)
-  @statsd_port Application.get_env(:instruments, :statsd_port, 8125)
+  @metrics_module Application.compile_env(:instruments, :reporter_module, Instruments.Statix)
+  @statsd_port Application.compile_env(:instruments, :statsd_port, 8125)
 
   defmacro __using__(_opts) do
     quote do
@@ -266,7 +266,7 @@ defmodule Instruments do
           )
 
         Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) ->
-          Logger.warn(
+          Logger.warning(
             "[Instruments] not collecting memory metrics because :mseg_alloc is not enabled"
           )
 
@@ -276,7 +276,7 @@ defmodule Instruments do
     rescue
       ErlangError ->
         if Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) do
-          Logger.warn(
+          Logger.warning(
             "[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)"
           )
         end

@@ -76,6 +76,6 @@ defmodule Instruments.Sysmon.Emitter do
   end
 
   defp handle_event(%__MODULE__{}, event, data) do
-    Logger.warn("Emitter received unknown event #{inspect(event)} with data #{inspect(data)}")
+    Logger.warning("Emitter received unknown event #{inspect(event)} with data #{inspect(data)}")
   end
 end

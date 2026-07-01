@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # setting the statsd port to something other than the default
 # in test so we don't conflict in the build env.
