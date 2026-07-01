@@ -5,7 +5,7 @@ defmodule Instruments.MacroHelpers do
 
   @safe_metric_types [:increment, :decrement, :gauge, :event, :set]
 
-  @metrics_module Application.get_env(:instruments, :reporter_module, Instruments.Statix)
+  @metrics_module Application.compile_env(:instruments, :reporter_module, Instruments.Statix)
 
   def build_metric_macro(:measure, caller, metrics_module, key_ast, options_ast, function) do
     key = to_iolist(key_ast, caller)

@@ -8,7 +8,7 @@ defmodule Instruments.Probe.Definitions do
   @type definition_errors :: {:error, {:probe_names_taken, [String.t()]}}
   @type definition_response :: {:ok, [String.t()]} | definition_errors
 
-  @probe_prefix Application.get_env(:instruments, :probe_prefix)
+  @probe_prefix Application.compile_env(:instruments, :probe_prefix)
   @table_name :probe_definitions
 
   def start_link(_ \\ []), do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
