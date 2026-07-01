@@ -238,6 +238,18 @@ defmodule Instruments do
         report_interval: report_interval
       )
 
+      Probe.define!(
+        "recon.alloc.allocated",
+        :gauge,
+        module: Probes.Allocators,
+        keys: ~w(
+          by_allocator
+          backing_carriers
+          backing_carriers_size
+        )a,
+        report_interval: report_interval
+      )
+
       cond do
         # The supercarrier is part of mseg_alloc (the flags are all under +MMsc*, where the second "M" refers to `mseg_alloc`)
         # https://www.erlang.org/doc/apps/erts/erts_alloc.html
@@ -246,24 +258,29 @@ defmodule Instruments do
             function: fn ->
               erts_mmap_info = :erlang.system_info({:allocator, :erts_mmap})
 
-              get_in(erts_mmap_info, [:default_mmap, :supercarrier, :sizes]) || [total: 0, used: 0]
+              get_in(erts_mmap_info, [:default_mmap, :supercarrier, :sizes]) ||
+                [total: 0, used: 0]
             end,
             keys: ~w(total used)a,
             report_interval: report_interval
           )
 
         Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) ->
-          Logger.warn("[Instruments] not collecting memory metrics because :mseg_alloc is not enabled")
+          Logger.warn(
+            "[Instruments] not collecting memory metrics because :mseg_alloc is not enabled"
+          )
 
-        true -> :ok
+        true ->
+          :ok
       end
     rescue
       ErlangError ->
         if Application.get_env(:instruments, :warn_on_memory_stats_unsupported?, true) do
-          Logger.warn("[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)")
+          Logger.warn(
+            "[Instruments] not collecting memory metrics because :erlang.memory is unsupported (some allocator disabled?)"
+          )
         end
     end
-
 
     # process_count = current number of processes.
     # port_count = current number of ports.
