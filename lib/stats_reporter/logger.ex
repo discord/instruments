@@ -30,6 +30,11 @@ defmodule Instruments.StatsReporter.Logger do
   end
 
   @doc false
+  def distribution(key, value, _options \\ []) do
+    Logger.info("Adding #{value} to #{key} distribution")
+  end
+
+  @doc false
   def timing(key, value, _options \\ []) do
     Logger.info("#{key} took #{value}ms")
   end

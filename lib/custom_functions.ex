@@ -68,6 +68,11 @@ defmodule Instruments.CustomFunctions do
       end
 
       @doc false
+      def distribution(key, value, options \\ []) do
+        Instruments.distribution([unquote(prefix_with_dot), key], value, options)
+      end
+
+      @doc false
       def timing(key, value, options \\ []) do
         Instruments.timing([unquote(prefix_with_dot), key], value, options)
       end

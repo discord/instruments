@@ -53,6 +53,14 @@ defmodule Instruments.CustomFunctionsTest do
       assert_metric_reported(:histogram, "custom.my.histogram", 901, tags: ["cool_metric"])
     end
 
+    test "to distribution calls" do
+      Custom.distribution("my.distribution", 900, sample_rate: 1.0)
+      assert_metric_reported(:distribution, "custom.my.distribution", 900)
+
+      Custom.distribution("my.distribution", 901, tags: ["cool_metric"], sample_rate: 1.0)
+      assert_metric_reported(:distribution, "custom.my.distribution", 901, tags: ["cool_metric"])
+    end
+
     test "to timing calls" do
       Custom.timing("my.timing", 900, sample_rate: 1.0)
       assert_metric_reported(:timing, "custom.my.timing", 900)

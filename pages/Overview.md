@@ -9,6 +9,7 @@ Instruments has the following types of metrics that closely mirror statsd.
   * **Counters**: Allow you to increment or decrement a value.
   * **Gauges**: Allow you to report a single value that changes over time
   * **Histograms**: Values are grouped into percentiles
+  * **Distributions**: Like histograms, but aggregated by DataDog so percentiles are accurate across hosts
   * **Timings**: Report a timed value in milliseconds
   * **Measurements**: Measure the execution time of a function
   * **Sets**: Add a value to a statsd set

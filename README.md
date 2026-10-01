@@ -14,6 +14,7 @@ Instruments has the following types of metrics that closely mirror statsd.
   * **Counters**: Allow you to increment or decrement a value.
   * **Gauges**: Allow you to report a single value that changes over time
   * **Histograms**: Values are grouped into percentiles
+  * **Distributions**: Like histograms, but aggregated by DataDog so percentiles are accurate across hosts
   * **Timings**: Report a timed value in milliseconds
   * **Measurements**: Measure the execution time of a function
   * **Sets**: Add a value to a statsd set
@@ -154,7 +155,7 @@ def increment_rpc(rpc_name),
 If you wish, you may pass any IOData as the name of a metric.
 
 #### Sample Rates
-For histograms, measure calls and timings, the default sample rate is pegged to 0.1.
+For histograms, distributions, measure calls and timings, the default sample rate is pegged to 0.1.
 This is so you don't accidentally overload your metrics collector. It can be
 overridden by passing `sample_rate: float_value` to your metrics call in the
 options.
