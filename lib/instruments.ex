@@ -116,6 +116,27 @@ defmodule Instruments do
       )
 
   @doc """
+  Adds a value to a distribution
+
+  Reports `value` to a DataDog distribution with key `key`. Unlike a histogram, which the
+  DataDog agent aggregates per host, a distribution's values are aggregated by DataDog itself,
+  so its percentiles are accurate across every host reporting the metric.
+
+  Distributions are a DogStatsD extension and aren't understood by plain statsd servers.
+  Like histograms, they default to a `sample_rate` of 0.1.
+  """
+  defmacro distribution(key, value, options \\ []),
+    do:
+      MacroHelpers.build_metric_macro(
+        :distribution,
+        __CALLER__,
+        @metrics_module,
+        key,
+        value,
+        options
+      )
+
+  @doc """
   Reports a timed value
 
   If you're manually timing something, you can use this function to report its value. Timings

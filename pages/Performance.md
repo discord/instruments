@@ -30,7 +30,7 @@ def increment_rpc(rpc_name),
 If you wish, you may pass any IOData as the name of a metric.
 
 ### Sample Rates
-For histograms, measure calls and timings, the default sample rate is pegged to 0.1.
+For histograms, distributions, measure calls and timings, the default sample rate is pegged to 0.1.
 This is so you don't accidentally overload your metrics collector. It can be
 overridden by passing `sample_rate: float_value` to your metrics call in the
 options.

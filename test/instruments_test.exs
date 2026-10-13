@@ -113,6 +113,31 @@ defmodule InstrumentsTest do
     assert_metric_reported(:histogram, "discord.users.friend_count", 29)
   end
 
+  test "setting a distribution" do
+    Instruments.distribution("my.distribution", 29, sample_rate: 1.0)
+    assert_metric_reported(:distribution, "my.distribution", 29)
+
+    Instruments.distribution("my.distribution", 949,
+      tags: ["rpc:call", "other:data"],
+      sample_rate: 1.0
+    )
+
+    assert_metric_reported(:distribution, "my.distribution", 949,
+      tags: ["rpc:call", "other:data"],
+      sample_rate: 1.0
+    )
+
+    distribution_name = "friend_count"
+    Instruments.distribution("discord.users.#{distribution_name}", 29, sample_rate: 1.0)
+    assert_metric_reported(:distribution, "discord.users.friend_count", 29)
+  end
+
+  test "distributions are sampled at 0.1 by default" do
+    for _ <- 1..200, do: Instruments.distribution("my.sampled_distribution", 1)
+    assert_receive {:metric_reported, {:distribution, "my.sampled_distribution", 1, opts}}, 5000
+    assert Keyword.get(opts, :sample_rate) == 0.1
+  end
+
   test "setting a set value" do
     Instruments.set("my.set", 629)
     assert_metric_reported(:set, "my.set", 629)

@@ -21,6 +21,9 @@ defmodule Instruments.StatsReporter.Null do
   def histogram(_key, _value, _options \\ []), do: :ok
 
   @doc false
+  def distribution(_key, _value, _options \\ []), do: :ok
+
+  @doc false
   def timing(_key, _value, _options \\ []), do: :ok
 
   @doc false

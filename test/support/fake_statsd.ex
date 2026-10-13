@@ -50,6 +50,10 @@ defmodule FakeStatsd do
     {:histogram, name, to_number(val), opts}
   end
 
+  defp do_decode(name, val, "d", opts) do
+    {:distribution, name, to_number(val), opts}
+  end
+
   defp do_decode(name, val, "c", opts) do
     {type, numeric_val} =
       case to_number(val) do

@@ -38,6 +38,11 @@ defmodule Instruments.StatsReporter do
   @callback histogram(key, integer, keyword) :: stats_return
 
   @doc """
+  Include the value in the DataDog distribution defined by `key`
+  """
+  @callback distribution(key, integer, keyword) :: stats_return
+
+  @doc """
   Include the timing in the `key`
   """
   @callback timing(key, integer, keyword) :: stats_return
@@ -58,5 +63,5 @@ defmodule Instruments.StatsReporter do
   """
   @callback send_event(title :: iodata, text :: iodata, keyword) :: stats_return
 
-  @optional_callbacks [send_event: 3]
+  @optional_callbacks [distribution: 3, send_event: 3]
 end

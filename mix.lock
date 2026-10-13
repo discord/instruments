@@ -12,5 +12,5 @@
   "nimble_parsec": {:hex, :nimble_parsec, "1.4.2", "8efba0122db06df95bfaa78f791344a89352ba04baedd3849593bfce4d0dc1c6", [:mix], [], "hexpm", "4b21398942dda052b403bbe1da991ccd03a053668d147d53fb8c4e0efe09c973"},
   "recon": {:hex, :recon, "2.5.2", "cba53fa8db83ad968c9a652e09c3ed7ddcc4da434f27c3eaa9ca47ffb2b1ff03", [:mix, :rebar3], [], "hexpm", "2c7523c8dee91dff41f6b3d63cba2bd49eb6d2fe5bf1eec0df7f87eb5e230e1c"},
   "statistex": {:hex, :statistex, "1.1.0", "7fec1eb2f580a0d2c1a05ed27396a084ab064a40cfc84246dbfb0c72a5c761e5", [:mix], [], "hexpm", "f5950ea26ad43246ba2cce54324ac394a4e7408fdcf98b8e230f503a0cba9cf5"},
-  "statix": {:hex, :discord_statix, "1.8.0", "11a5daa60029b39cfab2e11f7158bb1be3a426a9349731145184c3e257bd820a", [:mix], [], "hexpm", "a840f9c2f5789986830cb259e50947c5263c09eaf8c1662b9511f28e772a7acd"},
+  "statix": {:hex, :discord_statix, "1.9.0", "900550a588bbda46a091a0fad3296cdf1edd10c6a027858e9d26c672ab9a3104", [:mix], [], "hexpm", "27cc5b9fc5c86f30a91bfcb6b940c119ef7a02ea75f726194341a3017c12f9a0"},
 }
